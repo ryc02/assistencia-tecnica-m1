@@ -1,0 +1,109 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head><meta charset="utf-8"><title>Apresentação do Projeto M1</title>
+<style>
+body { font-family: Calibri, sans-serif; font-size: 11pt; line-height: 1.5; padding: 20px; }
+h1 { color: #2F5496; font-size: 24pt; border-bottom: 2px solid #2F5496; padding-bottom: 5px; }
+h2 { color: #2E74B5; font-size: 16pt; margin-top: 20px; }
+h3 { color: #1F4D78; font-size: 14pt; }
+p { margin-bottom: 10px; text-align: justify; }
+ul { margin-bottom: 15px; }
+li { margin-bottom: 5px; }
+.box { background-color: #F2F2F2; padding: 10px; border-left: 4px solid #0070C0; margin: 15px 0; }
+</style>
+</head>
+<body>
+
+<h1>Apresentação do Projeto M1: Sistema de Assistência Técnica</h1>
+<p>Este documento serve como um guia de apoio para a apresentação do projeto M1, destacando as decisões arquiteturais adotadas, as razões pelas quais certas práticas foram seguidas (ou evitadas) e sugestões de evolução para o sistema.</p>
+
+<hr>
+
+<h2>1. Decisões Arquiteturais (O que usamos e por quê)</h2>
+
+<h3>1.1 Arquitetura MVC (Model-View-Controller)</h3>
+<p>Separamos estritamente a aplicação em três camadas:</p>
+<ul>
+    <li><b>Model:</b> Regras de negócio, Entidades e acesso a dados (DAO e JDBC).</li>
+    <li><b>View:</b> Páginas <code>.jsp</code> exclusivas para apresentação dos dados, sem regras de negócio ou lógicas complexas.</li>
+    <li><b>Controller:</b> Um ponto central (<code>FrontControllerServlet</code>) que intercepta requisições e delega o trabalho para os comandos específicos (<code>Commands</code>).</li>
+</ul>
+<div class="box">
+    <b>Por que é importante?</b> A separação de responsabilidades torna o código mais fácil de dar manutenção, testar e evoluir. Modificar uma tela HTML (View) não corre o risco de quebrar as regras de negócio (Model).
+</div>
+
+<h3>1.2 Padrões de Projeto Aplicados</h3>
+<ul>
+    <li><b>Command Pattern:</b> Ao invés de um Servlet gigante com vários if/else, isolamos cada ação do usuário (ex: inserir cliente, aprovar orçamento) em classes específicas.</li>
+    <li><b>Simple Factory:</b> Utilizamos o <code>CommandFactory</code> para instanciar dinamicamente o comando correto.</li>
+    <li><b>Builder Pattern:</b> Usado na construção de entidades complexas (como Orçamento e Ordem de Serviço) para garantir que os objetos sempre nasçam com estados válidos e evitar construtores gigantes.</li>
+</ul>
+
+<hr>
+
+<h2>2. Boas Práticas e Segurança (O que NÃO fazer e por quê)</h2>
+
+<h3>2.1 Conexão com o Banco de Dados (Credenciais)</h3>
+<ul>
+    <li><b>O que NÃO fazer:</b> Escrever a URL, usuário e senha de produção diretamente (hardcode) no código Java.</li>
+    <li><b>Nossa Solução:</b> Configuramos o sistema para ler as variáveis de ambiente (<code>DB_URL</code>, <code>DB_USER</code>, <code>DB_PASSWORD</code>).</li>
+</ul>
+<div class="box">
+    <b>Por quê?</b> Se o código vazar ou o repositório ficar público, as credenciais do banco estarão protegidas. Na nuvem (Render), as senhas ficam isoladas e injetadas de forma segura pelo servidor.
+</div>
+
+<h3>2.2 Segurança de Requisições (CSRF)</h3>
+<ul>
+    <li><b>O que NÃO fazer:</b> Aceitar requisições de alteração (POST, DELETE) de qualquer lugar sem verificação de origem.</li>
+    <li><b>Nossa Solução:</b> Implementamos proteção CSRF (Cross-Site Request Forgery). Todo formulário precisa enviar um token exclusivo validado pelo servidor.</li>
+</ul>
+<div class="box">
+    <b>Por quê?</b> Impede que um site malicioso engane o navegador do usuário autenticado, forçando-o a executar ações indesejadas (como excluir um cliente secretamente).
+</div>
+
+<h3>2.3 Tratamento de Parâmetros e SQL</h3>
+<ul>
+    <li><b>O que NÃO fazer:</b> Concatenar strings para montar consultas SQL (ex: <code>"SELECT * FROM cliente WHERE nome = '" + nome + "'"</code>).</li>
+    <li><b>Nossa Solução:</b> Usamos <code>PreparedStatement</code> rigorosamente em todos os DAOs.</li>
+</ul>
+<div class="box">
+    <b>Por quê?</b> Previne ataques de SQL Injection, neutralizando qualquer tentativa de alterar o comando SQL original.
+</div>
+
+<hr>
+
+<h2>3. Questões para Melhoria Futura (Evolução do Projeto)</h2>
+<p>Durante a construção do sistema, identificamos oportunidades de escalar o projeto e torná-lo mais robusto para um cenário comercial avançado:</p>
+
+<ol>
+    <li>
+        <b>Frameworks de Mapeamento Objeto-Relacional (ORM)</b>
+        <ul>
+            <li><i>Proposta:</i> Substituir o acesso nativo JDBC por Hibernate/JPA.</li>
+            <li><i>Por quê?</i> Reduziria drasticamente o código repetitivo dos DAOs e simplificaria o gerenciamento de relacionamentos difíceis (como o vínculo 1:N entre Cliente e Equipamento).</li>
+        </ul>
+    </li>
+    <li>
+        <b>Injeção de Dependências (IoC)</b>
+        <ul>
+            <li><i>Proposta:</i> Migrar a arquitetura base para Spring Boot.</li>
+            <li><i>Por quê?</i> O Spring gerenciaria as dependências de forma automática, otimizaria a memória (evitando instanciar novos services a cada requisição) e traria recursos de segurança prontos.</li>
+        </ul>
+    </li>
+    <li>
+        <b>Arquitetura Baseada em APIs (REST)</b>
+        <ul>
+            <li><i>Proposta:</i> Trocar a renderização via <code>.jsp</code> por Endpoints REST (JSON) e desenvolver a interface em React, Angular ou Vue.js.</li>
+            <li><i>Por quê?</i> Permite que o mesmo sistema (Back-end) atenda ao portal Web e também a um futuro aplicativo Mobile (Android/iOS) sem reescrever as regras de negócio.</li>
+        </ul>
+    </li>
+    <li>
+        <b>Testes Unitários Isolados (Mocks)</b>
+        <ul>
+            <li><i>Proposta:</i> Além dos testes de Integração atuais, criar testes usando bibliotecas como Mockito.</li>
+            <li><i>Por quê?</i> Testaríamos as lógicas específicas simulando o banco de dados, resultando em testes milissegundos mais rápidos.</li>
+        </ul>
+    </li>
+</ol>
+
+</body>
+</html>

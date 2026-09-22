@@ -126,15 +126,14 @@ public class OrcamentoService {
     }
 
     /**
-     * [RF05 / Seção 7 / T10 / T11 / T12]
-     * APROVAR ORÇAMENTO (Transação Indivisível e Idempotente):
-     * 1. Bloqueia a linha do orçamento (SELECT FOR UPDATE).
-     * 2. Se já estiver APROVADO, retorna a ordem existente sem alterar dados (Idempotente).
-     * 3. Se RECUSADO, lança exceção.
-     * 4. Valida diagnóstico e calcula total.
-     * 5. Cria OrdemServico (ABERTA) e FichaTecnica na mesma transação JDBC.
-     * 6. Atualiza orçamento para APROVADO.
-     * 7. Commit. Em falha, rollback integral.
+     * [Transação e Regra de Negócio]
+     * Este é o coração do sistema. Quando aprovamos um orçamento, três coisas precisam 
+     * acontecer ao mesmo tempo, ou nenhuma delas acontece (Transação):
+     * 1. O orçamento muda para APROVADO.
+     * 2. Uma Ordem de Serviço (OS) é criada.
+     * 3. Uma Ficha Técnica (FT) é gerada e colada na OS.
+     * Se acabar a luz ou o banco falhar no passo 3, o sistema desfaz os passos 1 e 2.
+     * É o famoso conceito de "Tudo ou Nada" (Rollback Integral).
      */
     public OrdemServico aprovarOrcamento(Long orcamentoId, String responsavel, Prioridade prioridade,
                                           LocalDateTime previsaoConclusao, String observacoesOrdem,

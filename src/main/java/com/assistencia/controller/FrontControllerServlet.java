@@ -15,9 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * [Requisito 8: Padrão Front Controller & Requisito 10: Contrato HTTP]
- * Servlet central que intercepta todas as requisições para a rota /controle.
- * Valida método HTTP, token CSRF, obtém o comando via CommandFactory e encaminha a resposta.
+ * [Front Controller]
+ * Pense neste Servlet como o "Guarda de Trânsito" do nosso sistema.
+ * Ele recebe TODAS as requisições que chegam no endereço /controle.
+ * Em vez de termos um arquivo para salvar cliente, outro para listar, etc.,
+ * este arquivo centraliza tudo. Ele olha para o parâmetro "acao", confere se 
+ * é seguro continuar (valida o Token CSRF) e então repassa o trabalho para a 
+ * classe correta (o Command).
  */
 @WebServlet("/controle")
 public class FrontControllerServlet extends HttpServlet {
