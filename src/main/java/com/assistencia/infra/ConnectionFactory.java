@@ -17,9 +17,9 @@ import java.util.Scanner;
  */
 public class ConnectionFactory {
 
-    private static final String H2_URL = "jdbc:h2:mem:assistenciadb;DB_CLOSE_DELAY=-1;MODE=MySQL";
-    private static final String H2_USER = "sa";
-    private static final String H2_PASSWORD = "";
+    private static final String DEFAULT_H2_URL = "jdbc:h2:mem:assistenciadb;DB_CLOSE_DELAY=-1;MODE=MySQL";
+    private static final String DEFAULT_H2_USER = "sa";
+    private static final String DEFAULT_H2_PASSWORD = "";
 
     private static boolean dbInitialized = false;
 
@@ -37,9 +37,22 @@ public class ConnectionFactory {
 
     /**
      * [Requisito: Infraestrutura] Abre uma nova conexão JDBC.
+     * Tenta ler credenciais via variáveis de ambiente (para deploy persistente na nuvem).
+     * Se não encontrar, usa o H2 em memória como fallback.
      */
     public static Connection getConnection() throws SQLException {
-        Connection conn = DriverManager.getConnection(H2_URL, H2_USER, H2_PASSWORD);
+        String url = System.getenv("DB_URL");
+        if (url == null || url.trim().isEmpty()) {
+            url = DEFAULT_H2_URL;
+        }
+        
+        String user = System.getenv("DB_USER");
+        if (user == null) user = DEFAULT_H2_USER;
+        
+        String password = System.getenv("DB_PASSWORD");
+        if (password == null) password = DEFAULT_H2_PASSWORD;
+
+        Connection conn = DriverManager.getConnection(url, user, password);
         initDatabaseIfNeeded(conn);
         return conn;
     }
