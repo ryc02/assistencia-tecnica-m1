@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: assistencia-tecnica-m1
+    env: docker
+    plan: free
+    region: ohio
+    envVars:
+      - key: PORT
+        value: 8080
