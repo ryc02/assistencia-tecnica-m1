@@ -58,9 +58,6 @@
             
             <button type="submit" class="btn btn-primary" style="width: 100%;">Entrar</button>
             
-            <div style="text-align: center; margin-top: 1.5rem; font-size: 0.8rem; color: hsl(var(--muted-foreground));">
-                Dica: E-mail <strong>admin@m1.com</strong> e senha <strong>admin123</strong>
-            </div>
         </form>
     </div>
 </body>
