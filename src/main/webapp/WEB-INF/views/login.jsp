@@ -83,12 +83,29 @@
             margin-bottom: 1.25rem;
         }
 
+        .form-group-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
         label {
             display: block;
             font-size: 0.875rem;
             font-weight: 500;
-            margin-bottom: 0.5rem;
             color: hsl(var(--foreground));
+        }
+        
+        .forgot-password {
+            font-size: 0.75rem;
+            color: hsl(var(--primary));
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
         }
 
         input[type="email"], input[type="password"] {
@@ -162,7 +179,10 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="senha">Senha de acesso</label>
+                    <div class="form-group-flex">
+                        <label for="senha" style="margin-bottom: 0;">Senha de acesso</label>
+                        <a href="#" class="forgot-password" onclick="alert('Funcionalidade indisponível. Para recuperar a senha, entre em contato com o suporte em suporte@m1.com'); return false;">Esqueceu a senha?</a>
+                    </div>
                     <input type="password" id="senha" name="senha" required placeholder="••••••••">
                 </div>
                 
