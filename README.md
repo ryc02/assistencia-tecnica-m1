@@ -35,7 +35,7 @@ desenvolvida como projeto M1 da disciplina de Padrões de Projeto / Engenharia d
 ### 1. Iniciar o servidor
 
 ```bash
-.\mvnw.cmd compile exec:java
+.\mvnw.cmd compile exec:exec
 ```
 
 O Tomcat embarcado iniciará na porta **8080**.
@@ -100,4 +100,5 @@ Todas as requisições passam pela rota `/controle` com o parâmetro `acao`:
 
 ## Autores
 
-Preencher com os nomes e matrículas dos integrantes do grupo.
+- Integrante 1 (Matrícula: 123456)
+- Integrante 2 (Matrícula: 654321)

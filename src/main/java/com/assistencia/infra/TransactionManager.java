@@ -4,8 +4,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
- * [Requisito: Automação e Transações] Gerenciador de Transações JDBC
- * Garante o controle de commit e rollback indivisível nas operações do serviço.
+ * Centraliza o controle de transações do banco. 
+ * A ideia aqui é garantir que operações complexas, como aprovar um orçamento 
+ * e gerar uma ordem de serviço, aconteçam de forma atômica (ou vai tudo, ou não vai nada).
  */
 public class TransactionManager {
 
@@ -15,7 +16,8 @@ public class TransactionManager {
     }
 
     /**
-     * [Requisito 7] Executa um bloco de código dentro de uma transação JDBC indivisível.
+     * Recebe um bloco de código (ação) e o executa dentro de uma transação.
+     * Se der qualquer erro no meio do caminho, ele faz o rollback automático.
      */
     public static <T> T executeInTransaction(TransactionAction<T> action) throws Exception {
         Connection conn = ConnectionFactory.getConnection();

@@ -5,13 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Ordens de Serviço & Fichas - Assistência Técnica M1</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=5">
 </head>
 <body>
 
 <nav class="navbar">
     <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="navbar-brand">
-        🛠️ Assistência Técnica M1
+         Assistência Técnica M1
     </a>
     <ul class="navbar-nav">
         <li><a href="${pageContext.request.contextPath}/controle?acao=cliente.listar">Clientes</a></li>
@@ -19,13 +19,18 @@
         <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar">Orçamentos</a></li>
         <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar" class="active">Ordens & Fichas</a></li>
     </ul>
+
+    <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
+        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado}</strong></span>
+        <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
+    </div>
 </nav>
 
 <div class="container">
 
     <div class="card">
         <h2 class="card-title">
-            📋 Ordens de Serviço Cadastradas
+             Ordens de Serviço Cadastradas
             <c:if test="${orcamentoFiltro != null}">
                 <span style="font-size: 0.9rem; font-weight: normal;">(Filtrado por Orçamento #${orcamentoFiltro.id})</span>
             </c:if>
@@ -57,7 +62,7 @@
                         <td><span class="badge" style="background: #f1f5f9; color: #334155;">${os.prioridade}</span></td>
                         <td><span class="badge badge-${os.status.name().toLowerCase()}">${os.status}</span></td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/controle?acao=ordemServico.consultar&id=${os.id}" class="btn btn-sm btn-primary">🔍 Ordem & Ficha Juntas</a>
+                            <a href="${pageContext.request.contextPath}/controle?acao=ordemServico.consultar&id=${os.id}" class="btn btn-sm btn-primary"> Ordem & Ficha Juntas</a>
                         </td>
                     </tr>
                 </c:forEach>

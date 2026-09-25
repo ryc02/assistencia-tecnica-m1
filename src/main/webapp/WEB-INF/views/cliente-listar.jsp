@@ -5,13 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Clientes - Assistência Técnica M1</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=5">
 </head>
 <body>
 
 <nav class="navbar">
     <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="navbar-brand">
-        🛠️ Assistência Técnica M1
+         Assistência Técnica M1
     </a>
     <ul class="navbar-nav">
         <li><a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="active">Clientes</a></li>
@@ -19,13 +19,18 @@
         <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar">Orçamentos</a></li>
         <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar">Ordens & Fichas</a></li>
     </ul>
+
+    <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
+        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado}</strong></span>
+        <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
+    </div>
 </nav>
 
 <div class="container">
 
     <!-- [RF01] Formulário de Cadastro de Cliente -->
     <div class="card">
-        <h2 class="card-title">➕ Cadastrar Novo Cliente</h2>
+        <h2 class="card-title"> Cadastrar Novo Cliente</h2>
         <form action="${pageContext.request.contextPath}/controle" method="post">
             <input type="hidden" name="acao" value="cliente.inserir">
             <input type="hidden" name="csrfToken" value="${csrfToken}">
@@ -65,14 +70,14 @@
                 </div>
             </div>
             <div style="margin-top: 16px;">
-                <button type="submit" class="btn btn-primary">💾 Salvar Cliente</button>
+                <button type="submit" class="btn btn-primary"> Salvar Cliente</button>
             </div>
         </form>
     </div>
 
     <!-- [RF01] Listagem de Clientes -->
     <div class="card">
-        <h2 class="card-title">📋 Clientes Cadastrados</h2>
+        <h2 class="card-title"> Clientes Cadastrados</h2>
         <div class="table-responsive">
             <table>
                 <thead>
@@ -94,8 +99,8 @@
                         <td>${c.telefone}</td>
                         <td>${c.cidade}</td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/controle?acao=cliente.consultar&id=${c.id}" class="btn btn-sm btn-primary">🔍 Detalhes</a>
-                            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar&clienteId=${c.id}" class="btn btn-sm btn-secondary">💻 Equipamentos</a>
+                            <a href="${pageContext.request.contextPath}/controle?acao=cliente.consultar&id=${c.id}" class="btn btn-sm btn-primary"> Detalhes</a>
+                            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar&clienteId=${c.id}" class="btn btn-sm btn-secondary"> Equipamentos</a>
                         </td>
                     </tr>
                 </c:forEach>

@@ -5,13 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Orçamento #${orcamento.id} - Assistência Técnica M1</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=5">
 </head>
 <body>
 
 <nav class="navbar">
     <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="navbar-brand">
-        🛠️ Assistência Técnica M1
+         Assistência Técnica M1
     </a>
     <ul class="navbar-nav">
         <li><a href="${pageContext.request.contextPath}/controle?acao=cliente.listar">Clientes</a></li>
@@ -19,6 +19,11 @@
         <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar" class="active">Orçamentos</a></li>
         <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar">Ordens & Fichas</a></li>
     </ul>
+
+    <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
+        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado}</strong></span>
+        <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
+    </div>
 </nav>
 
 <div class="container">
@@ -26,7 +31,7 @@
     <!-- Card de Detalhes e Edição do Orçamento -->
     <div class="card">
         <h2 class="card-title">
-            💰 Orçamento #${orcamento.id}
+             Orçamento #${orcamento.id}
             <span class="badge badge-${orcamento.status.name().toLowerCase()}">${orcamento.status}</span>
         </h2>
 
@@ -52,9 +57,9 @@
                 <div class="form-group">
                     <label for="equipamentoId">Equipamento</label>
                     <select id="equipamentoId" name="equipamentoId" ${orcamento.status != 'PENDENTE' ? 'disabled' : ''} required>
-                        <c:forEach var="eq" items="${equipamentos}">
-                            <option value="${eq.id}" ${orcamento.equipamento.id == eq.id ? 'selected' : ''}>
-                                #${eq.id} - ${eq.tipo} ${eq.modelo}
+                        <c:forEach var="equip" items="${equipamentos}">
+                            <option value="${equip.id}" ${orcamento.equipamento.id == eq.id ? 'selected' : ''}>
+                                #${equip.id} - ${equip.tipo} ${equip.modelo}
                             </option>
                         </c:forEach>
                     </select>
@@ -87,7 +92,7 @@
 
             <c:if test="${orcamento.status == 'PENDENTE'}">
                 <div class="actions-bar">
-                    <button type="submit" class="btn btn-primary">✏️ Salvar Alterações</button>
+                    <button type="submit" class="btn btn-primary">✏ Salvar Alterações</button>
                 </div>
             </c:if>
         </form>
@@ -97,14 +102,14 @@
                 <input type="hidden" name="acao" value="orcamento.recusar">
                 <input type="hidden" name="id" value="${orcamento.id}">
                 <input type="hidden" name="csrfToken" value="${csrfToken}">
-                <button type="submit" class="btn btn-warning">❌ Recusar Orçamento</button>
+                <button type="submit" class="btn btn-warning"> Recusar Orçamento</button>
             </form>
 
             <form action="${pageContext.request.contextPath}/controle" method="post" style="margin-top: 10px;" onsubmit="return confirm('Excluir orçamento?');">
                 <input type="hidden" name="acao" value="orcamento.excluir">
                 <input type="hidden" name="id" value="${orcamento.id}">
                 <input type="hidden" name="csrfToken" value="${csrfToken}">
-                <button type="submit" class="btn btn-danger">🗑️ Excluir Orçamento</button>
+                <button type="submit" class="btn btn-danger"> Excluir Orçamento</button>
             </form>
         </c:if>
     </div>
@@ -113,7 +118,7 @@
     <c:if test="${orcamento.status == 'PENDENTE'}">
         <div class="card" style="border: 2px solid var(--success);">
             <h2 class="card-title" style="color: var(--success);">
-                ✅ Aprovar Orçamento e Gerar Ordem de Serviço + Ficha Técnica
+                 Aprovar Orçamento e Gerar Ordem de Serviço + Ficha Técnica
             </h2>
             <p style="margin-bottom: 16px; color: var(--text-muted);">
                 Ao aprovar, o sistema irá alterar o status do orçamento para <strong>APROVADO</strong> e criará automaticamente a <strong>Ordem de Serviço (ABERTA)</strong> e a <strong>Ficha Técnica</strong> correspondente em uma única transação indivisível.
@@ -124,7 +129,7 @@
                 <input type="hidden" name="id" value="${orcamento.id}">
                 <input type="hidden" name="csrfToken" value="${csrfToken}">
 
-                <h4 style="margin-bottom: 10px; color: var(--primary);">📋 Dados da Ordem de Serviço</h4>
+                <h4 style="margin-bottom: 10px; color: var(--primary);"> Dados da Ordem de Serviço</h4>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="responsavel">Técnico Responsável *</label>
@@ -138,13 +143,17 @@
                             <option value="ALTA">ALTA</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label for="previsaoConclusao">Previsão de Conclusão</label>
+                        <input type="datetime-local" id="previsaoConclusao" name="previsaoConclusao">
+                    </div>
                     <div class="form-group full-width">
                         <label for="observacoes">Observações da Ordem</label>
                         <input type="text" id="observacoes" name="observacoes" placeholder="Observações iniciais...">
                     </div>
                 </div>
 
-                <h4 style="margin: 20px 0 10px 0; color: var(--primary);">📝 Dados da Ficha Técnica (Recepção)</h4>
+                <h4 style="margin: 20px 0 10px 0; color: var(--primary);"> Dados da Ficha Técnica (Recepção)</h4>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="ficha.estadoConservacao">Estado de Conservação *</label>
@@ -186,7 +195,7 @@
                 </div>
 
                 <div style="margin-top: 20px;">
-                    <button type="submit" class="btn btn-success">✅ Confirmar Aprovação e Gerar Atendimento</button>
+                    <button type="submit" class="btn btn-success"> Confirmar Aprovação e Gerar Atendimento</button>
                 </div>
             </form>
         </div>
@@ -196,8 +205,8 @@
     <c:if test="${orcamento.status == 'APROVADO' && ordemServico != null}">
         <div class="card" style="border: 2px solid var(--primary);">
             <h2 class="card-title">
-                ⚙️ Atendimento Vinculado (Ordem de Serviço #${ordemServico.id})
-                <a href="${pageContext.request.contextPath}/controle?acao=ordemServico.consultar&id=${ordemServico.id}" class="btn btn-sm btn-primary">🔍 Ir para Atendimento Completo</a>
+                 Atendimento Vinculado (Ordem de Serviço #${ordemServico.id})
+                <a href="${pageContext.request.contextPath}/controle?acao=ordemServico.consultar&id=${ordemServico.id}" class="btn btn-sm btn-primary"> Ir para Atendimento Completo</a>
             </h2>
             <p><strong>Status da Ordem:</strong> <span class="badge badge-${ordemServico.status.name().toLowerCase()}">${ordemServico.status}</span></p>
             <p><strong>Técnico Responsável:</strong> ${ordemServico.responsavel}</p>

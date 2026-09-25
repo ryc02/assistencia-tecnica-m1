@@ -5,13 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Equipamentos - Assistência Técnica M1</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=5">
 </head>
 <body>
 
 <nav class="navbar">
     <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="navbar-brand">
-        🛠️ Assistência Técnica M1
+         Assistência Técnica M1
     </a>
     <ul class="navbar-nav">
         <li><a href="${pageContext.request.contextPath}/controle?acao=cliente.listar">Clientes</a></li>
@@ -19,13 +19,18 @@
         <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar">Orçamentos</a></li>
         <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar">Ordens & Fichas</a></li>
     </ul>
+
+    <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
+        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado}</strong></span>
+        <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
+    </div>
 </nav>
 
 <div class="container">
 
     <!-- [RF02] Formulário de Cadastro de Equipamento -->
     <div class="card">
-        <h2 class="card-title">➕ Cadastrar Novo Equipamento</h2>
+        <h2 class="card-title"> Cadastrar Novo Equipamento</h2>
         <form action="${pageContext.request.contextPath}/controle" method="post">
             <input type="hidden" name="acao" value="equipamento.inserir">
             <input type="hidden" name="csrfToken" value="${csrfToken}">
@@ -78,7 +83,7 @@
                 </div>
             </div>
             <div style="margin-top: 16px;">
-                <button type="submit" class="btn btn-primary">💾 Salvar Equipamento</button>
+                <button type="submit" class="btn btn-primary"> Salvar Equipamento</button>
             </div>
         </form>
     </div>
@@ -86,7 +91,7 @@
     <!-- [RF02] Listagem de Equipamentos -->
     <div class="card">
         <h2 class="card-title">
-            💻 Equipamentos Cadastrados
+             Equipamentos Cadastrados
             <c:if test="${clienteFiltro != null}">
                 <span style="font-size: 0.9rem; font-weight: normal;">(Filtrado por Cliente: <strong>${clienteFiltro.nome}</strong>)</span>
             </c:if>
@@ -104,16 +109,16 @@
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach var="eq" items="${equipamentos}">
+                <c:forEach var="equip" items="${equipamentos}">
                     <tr>
-                        <td>${eq.id}</td>
-                        <td><a href="${pageContext.request.contextPath}/controle?acao=cliente.consultar&id=${eq.cliente.id}" class="link-vinculo">${eq.cliente.nome}</a></td>
-                        <td>${eq.tipo}</td>
-                        <td><strong><a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${eq.id}" class="link-vinculo">${eq.marca} ${eq.modelo}</a></strong></td>
-                        <td>${eq.voltagem}</td>
+                        <td>${equip.id}</td>
+                        <td><a href="${pageContext.request.contextPath}/controle?acao=cliente.consultar&id=${equip.cliente.id}" class="link-vinculo">${equip.cliente.nome}</a></td>
+                        <td>${equip.tipo}</td>
+                        <td><strong><a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${equip.id}" class="link-vinculo">${equip.marca} ${equip.modelo}</a></strong></td>
+                        <td>${equip.voltagem}</td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${eq.id}" class="btn btn-sm btn-primary">🔍 Detalhes</a>
-                            <a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar&equipamentoId=${eq.id}" class="btn btn-sm btn-secondary">💰 Orçamentos</a>
+                            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${equip.id}" class="btn btn-sm btn-primary"> Detalhes</a>
+                            <a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar&equipamentoId=${equip.id}" class="btn btn-sm btn-secondary"> Orçamentos</a>
                         </td>
                     </tr>
                 </c:forEach>

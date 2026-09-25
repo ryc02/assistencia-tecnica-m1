@@ -5,13 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Atendimento OS #${ordemServico.id} - Assistência Técnica M1</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=5">
 </head>
 <body>
 
 <nav class="navbar">
     <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="navbar-brand">
-        🛠️ Assistência Técnica M1
+         Assistência Técnica M1
     </a>
     <ul class="navbar-nav">
         <li><a href="${pageContext.request.contextPath}/controle?acao=cliente.listar">Clientes</a></li>
@@ -19,6 +19,11 @@
         <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar">Orçamentos</a></li>
         <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar" class="active">Ordens & Fichas</a></li>
     </ul>
+
+    <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
+        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado}</strong></span>
+        <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
+    </div>
 </nav>
 
 <div class="container">
@@ -29,7 +34,7 @@
     <div class="card" style="border-left: 6px solid var(--primary);">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <div>
-                <h2 style="margin: 0;">🛠️ Ordem de Serviço #${ordemServico.id}</h2>
+                <h2 style="margin: 0;"> Ordem de Serviço #${ordemServico.id}</h2>
                 <div style="margin-top: 4px;">
                     <strong>Status:</strong> <span class="badge badge-${ordemServico.status.name().toLowerCase()}">${ordemServico.status}</span>
                     &nbsp;|&nbsp; <strong>Prioridade:</strong> ${ordemServico.prioridade}
@@ -44,7 +49,7 @@
                         <input type="hidden" name="acao" value="ordemServico.iniciar">
                         <input type="hidden" name="id" value="${ordemServico.id}">
                         <input type="hidden" name="csrfToken" value="${csrfToken}">
-                        <button type="submit" class="btn btn-primary">▶️ Iniciar Atendimento</button>
+                        <button type="submit" class="btn btn-primary"> Iniciar Atendimento</button>
                     </form>
 
                     <!-- [Seção 7 / T06] Excluir Ordem Aberta -->
@@ -52,7 +57,7 @@
                         <input type="hidden" name="acao" value="ordemServico.excluir">
                         <input type="hidden" name="id" value="${ordemServico.id}">
                         <input type="hidden" name="csrfToken" value="${csrfToken}">
-                        <button type="submit" class="btn btn-danger">🗑️ Excluir Ordem Aberta</button>
+                        <button type="submit" class="btn btn-danger"> Excluir Ordem Aberta</button>
                     </form>
                 </c:if>
 
@@ -61,7 +66,7 @@
                         <input type="hidden" name="acao" value="ordemServico.concluir">
                         <input type="hidden" name="id" value="${ordemServico.id}">
                         <input type="hidden" name="csrfToken" value="${csrfToken}">
-                        <button type="submit" class="btn btn-success">✅ Concluir Atendimento</button>
+                        <button type="submit" class="btn btn-success"> Concluir Atendimento</button>
                     </form>
                 </c:if>
 
@@ -70,7 +75,7 @@
                         <input type="hidden" name="acao" value="ordemServico.cancelar">
                         <input type="hidden" name="id" value="${ordemServico.id}">
                         <input type="hidden" name="csrfToken" value="${csrfToken}">
-                        <button type="submit" class="btn btn-warning">❌ Cancelar Atendimento</button>
+                        <button type="submit" class="btn btn-warning"> Cancelar Atendimento</button>
                     </form>
                 </c:if>
             </div>
@@ -79,7 +84,7 @@
 
     <!-- Navegação e Resumo do Vínculo -->
     <div class="card" style="background: #f8fafc;">
-        <h3 class="card-title">🔗 Resumo do Vínculo</h3>
+        <h3 class="card-title"> Resumo do Vínculo</h3>
         <div class="form-grid">
             <div>
                 <strong>Orçamento Aprovado:</strong><br>
@@ -104,7 +109,7 @@
 
     <!-- Form 1: Edição da Ordem de Serviço -->
     <div class="card">
-        <h3 class="card-title">📋 Dados da Ordem de Serviço</h3>
+        <h3 class="card-title"> Dados da Ordem de Serviço</h3>
         <form action="${pageContext.request.contextPath}/controle" method="post">
             <input type="hidden" name="acao" value="ordemServico.atualizar">
             <input type="hidden" name="id" value="${ordemServico.id}">
@@ -135,7 +140,7 @@
 
             <c:if test="${ordemServico.status == 'ABERTA' || ordemServico.status == 'EM_ANDAMENTO'}">
                 <div class="actions-bar">
-                    <button type="submit" class="btn btn-primary">✏️ Salvar Dados da Ordem</button>
+                    <button type="submit" class="btn btn-primary">✏ Salvar Dados da Ordem</button>
                 </div>
             </c:if>
         </form>
@@ -143,7 +148,7 @@
 
     <!-- [Requisito 6 / 1:1] Form 2: Ficha Técnica (Exibida na mesma tela) -->
     <div class="card" style="border-top: 4px solid var(--info);">
-        <h3 class="card-title">📝 Ficha Técnica (Inspeção & Recepção - ID #${fichaTecnica.id})</h3>
+        <h3 class="card-title"> Ficha Técnica (Inspeção & Recepção - ID #${fichaTecnica.id})</h3>
 
         <form action="${pageContext.request.contextPath}/controle" method="post">
             <input type="hidden" name="acao" value="fichaTecnica.atualizar">
@@ -196,7 +201,7 @@
 
             <c:if test="${ordemServico.status == 'ABERTA' || ordemServico.status == 'EM_ANDAMENTO'}">
                 <div class="actions-bar">
-                    <button type="submit" class="btn btn-primary">✏️ Salvar Dados da Ficha Técnica</button>
+                    <button type="submit" class="btn btn-primary">✏ Salvar Dados da Ficha Técnica</button>
                 </div>
             </c:if>
         </form>

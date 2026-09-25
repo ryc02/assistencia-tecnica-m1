@@ -17,11 +17,11 @@ import java.util.Scanner;
  */
 public class ConnectionFactory {
 
-    private static final String DEFAULT_H2_URL = "jdbc:h2:mem:assistenciadb;DB_CLOSE_DELAY=-1;MODE=MySQL";
     private static final String DEFAULT_H2_USER = "sa";
     private static final String DEFAULT_H2_PASSWORD = "";
 
     private static boolean dbInitialized = false;
+    private static String testDbUrl = null;
 
     static {
         try {
@@ -37,13 +37,21 @@ public class ConnectionFactory {
 
     /**
      * [Requisito: Infraestrutura] Abre uma nova conexão JDBC.
-     * Tenta ler credenciais via variáveis de ambiente (para deploy persistente na nuvem).
-     * Se não encontrar, usa o H2 em memória como fallback.
+     * Prioridade: testDbUrl (testes) > DB_URL (env) > DATABASE_FILE (H2 arquivo) > H2 arquivo padrão.
      */
     public static Connection getConnection() throws SQLException {
-        String url = System.getenv("DB_URL");
-        if (url == null || url.trim().isEmpty()) {
-            url = DEFAULT_H2_URL;
+        String url;
+        if (testDbUrl != null) {
+            url = testDbUrl;
+        } else {
+            url = System.getenv("DB_URL");
+            if (url == null || url.trim().isEmpty()) {
+                String dbFile = System.getenv("DATABASE_FILE");
+                if (dbFile == null || dbFile.trim().isEmpty()) {
+                    dbFile = "./data/assistenciadb";
+                }
+                url = "jdbc:h2:file:" + dbFile + ";DB_CLOSE_DELAY=-1;MODE=MySQL;AUTO_SERVER=TRUE";
+            }
         }
         
         String user = System.getenv("DB_USER");
@@ -58,7 +66,7 @@ public class ConnectionFactory {
     }
 
     /**
-     * Inicializa a estrutura de tabelas e dados fictícios se ainda não foi executado.
+     * Inicializa a estrutura de tabelas e dados iniciais se ainda não foi executado.
      */
     private static synchronized void initDatabaseIfNeeded(Connection conn) {
         if (dbInitialized) {
@@ -98,7 +106,12 @@ public class ConnectionFactory {
         }
     }
 
+    /**
+     * Reseta estado para testes. Usa H2 em memória para não criar arquivos no disco.
+     */
     public static void resetDatabaseForTests() {
+        testDbUrl = "jdbc:h2:mem:testdb_" + System.nanoTime() + ";DB_CLOSE_DELAY=-1;MODE=MySQL";
         dbInitialized = false;
     }
 }
+

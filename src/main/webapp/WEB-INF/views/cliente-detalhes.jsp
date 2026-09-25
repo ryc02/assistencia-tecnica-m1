@@ -5,13 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Detalhes do Cliente - Assistência Técnica M1</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=5">
 </head>
 <body>
 
 <nav class="navbar">
     <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="navbar-brand">
-        🛠️ Assistência Técnica M1
+         Assistência Técnica M1
     </a>
     <ul class="navbar-nav">
         <li><a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="active">Clientes</a></li>
@@ -19,13 +19,18 @@
         <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar">Orçamentos</a></li>
         <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar">Ordens & Fichas</a></li>
     </ul>
+
+    <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
+        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado}</strong></span>
+        <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
+    </div>
 </nav>
 
 <div class="container">
 
     <!-- Editar / Visualizar Cliente -->
     <div class="card">
-        <h2 class="card-title">👤 Detalhes do Cliente #${cliente.id}</h2>
+        <h2 class="card-title"> Detalhes do Cliente #${cliente.id}</h2>
         <form action="${pageContext.request.contextPath}/controle" method="post">
             <input type="hidden" name="acao" value="cliente.atualizar">
             <input type="hidden" name="id" value="${cliente.id}">
@@ -67,8 +72,8 @@
             </div>
 
             <div class="actions-bar">
-                <button type="submit" class="btn btn-primary">✏️ Atualizar Cliente</button>
-                <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="btn btn-secondary">⬅️ Voltar</a>
+                <button type="submit" class="btn btn-primary">✏ Atualizar Cliente</button>
+                <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="btn btn-secondary">⬅ Voltar</a>
             </div>
         </form>
 
@@ -76,15 +81,15 @@
             <input type="hidden" name="acao" value="cliente.excluir">
             <input type="hidden" name="id" value="${cliente.id}">
             <input type="hidden" name="csrfToken" value="${csrfToken}">
-            <button type="submit" class="btn btn-danger">🗑️ Excluir Cliente</button>
+            <button type="submit" class="btn btn-danger"> Excluir Cliente</button>
         </form>
     </div>
 
     <!-- [RF06] Navegação: Equipamentos do Cliente (Multiplicidade 1:N) -->
     <div class="card">
         <h2 class="card-title">
-            💻 Equipamentos deste Cliente
-            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar&clienteId=${cliente.id}" class="btn btn-sm btn-primary">➕ Novo Equipamento</a>
+             Equipamentos deste Cliente
+            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar&clienteId=${cliente.id}" class="btn btn-sm btn-primary"> Novo Equipamento</a>
         </h2>
         <div class="table-responsive">
             <table>
@@ -99,15 +104,15 @@
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach var="eq" items="${equipamentos}">
+                <c:forEach var="equip" items="${equipamentos}">
                     <tr>
-                        <td>${eq.id}</td>
-                        <td>${eq.tipo}</td>
-                        <td>${eq.marca}</td>
-                        <td><strong><a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${eq.id}" class="link-vinculo">${eq.modelo}</a></strong></td>
-                        <td>${eq.numeroSerie != null ? eq.numeroSerie : 'N/I'}</td>
+                        <td>${equip.id}</td>
+                        <td>${equip.tipo}</td>
+                        <td>${equip.marca}</td>
+                        <td><strong><a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${equip.id}" class="link-vinculo">${equip.modelo}</a></strong></td>
+                        <td>${equip.numeroSerie != null ? eq.numeroSerie : 'N/I'}</td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${eq.id}" class="btn btn-sm btn-primary">🔍 Detalhes</a>
+                            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${equip.id}" class="btn btn-sm btn-primary"> Detalhes</a>
                         </td>
                     </tr>
                 </c:forEach>

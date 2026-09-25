@@ -5,13 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Orçamentos - Assistência Técnica M1</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=5">
 </head>
 <body>
 
 <nav class="navbar">
     <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="navbar-brand">
-        🛠️ Assistência Técnica M1
+         Assistência Técnica M1
     </a>
     <ul class="navbar-nav">
         <li><a href="${pageContext.request.contextPath}/controle?acao=cliente.listar">Clientes</a></li>
@@ -19,13 +19,18 @@
         <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar" class="active">Orçamentos</a></li>
         <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar">Ordens & Fichas</a></li>
     </ul>
+
+    <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
+        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado}</strong></span>
+        <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
+    </div>
 </nav>
 
 <div class="container">
 
     <!-- [RF03] Form de Cadastro de Orçamento -->
     <div class="card">
-        <h2 class="card-title">➕ Criar Novo Orçamento</h2>
+        <h2 class="card-title"> Criar Novo Orçamento</h2>
         <form action="${pageContext.request.contextPath}/controle" method="post">
             <input type="hidden" name="acao" value="orcamento.inserir">
             <input type="hidden" name="csrfToken" value="${csrfToken}">
@@ -35,9 +40,9 @@
                     <label for="equipamentoId">Equipamento *</label>
                     <select id="equipamentoId" name="equipamentoId" required>
                         <option value="">-- Selecione o Equipamento --</option>
-                        <c:forEach var="eq" items="${equipamentos}">
-                            <option value="${eq.id}" ${equipamentoFiltro != null && equipamentoFiltro.id == eq.id ? 'selected' : ''}>
-                                #${eq.id} - ${eq.tipo} ${eq.marca} ${eq.modelo} (${eq.cliente.nome})
+                        <c:forEach var="equip" items="${equipamentos}">
+                            <option value="${equip.id}" ${equipamentoFiltro != null && equipamentoFiltro.id == eq.id ? 'selected' : ''}>
+                                #${equip.id} - ${equip.tipo} ${equip.marca} ${equip.modelo} (${equip.cliente.nome})
                             </option>
                         </c:forEach>
                     </select>
@@ -64,7 +69,7 @@
                 </div>
             </div>
             <div style="margin-top: 16px;">
-                <button type="submit" class="btn btn-primary">💾 Criar Orçamento (Calcula Total no Servidor)</button>
+                <button type="submit" class="btn btn-primary"> Criar Orçamento (Calcula Total no Servidor)</button>
             </div>
         </form>
     </div>
@@ -72,7 +77,7 @@
     <!-- Listagem de Orçamentos -->
     <div class="card">
         <h2 class="card-title">
-            💰 Orçamentos Cadastrados
+             Orçamentos Cadastrados
             <c:if test="${equipamentoFiltro != null}">
                 <span style="font-size: 0.9rem; font-weight: normal;">(Filtrado por Equipamento #${equipamentoFiltro.id} - ${equipamentoFiltro.modelo})</span>
             </c:if>
@@ -103,7 +108,7 @@
                         <td><span class="badge badge-${orc.status.name().toLowerCase()}">${orc.status}</span></td>
                         <td><strong>R$ ${orc.valorTotal}</strong></td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/controle?acao=orcamento.consultar&id=${orc.id}" class="btn btn-sm btn-primary">🔍 Visualizar / Aprovar</a>
+                            <a href="${pageContext.request.contextPath}/controle?acao=orcamento.consultar&id=${orc.id}" class="btn btn-sm btn-primary"> Visualizar / Aprovar</a>
                         </td>
                     </tr>
                 </c:forEach>

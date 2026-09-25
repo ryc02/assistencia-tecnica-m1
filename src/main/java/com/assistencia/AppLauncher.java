@@ -22,7 +22,8 @@ public class AppLauncher {
 
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(port);
-        tomcat.getConnector();
+        // Bind em 0.0.0.0 para aceitar conexões externas (necessário para deploy online)
+        tomcat.getConnector().setProperty("address", "0.0.0.0");
 
         String webappDir = new File("src/main/webapp").getAbsolutePath();
         if (!new File(webappDir).exists()) {

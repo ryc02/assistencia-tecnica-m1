@@ -5,13 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Detalhes do Equipamento - Assistência Técnica M1</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=5">
 </head>
 <body>
 
 <nav class="navbar">
     <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="navbar-brand">
-        🛠️ Assistência Técnica M1
+         Assistência Técnica M1
     </a>
     <ul class="navbar-nav">
         <li><a href="${pageContext.request.contextPath}/controle?acao=cliente.listar">Clientes</a></li>
@@ -19,13 +19,18 @@
         <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar">Orçamentos</a></li>
         <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar">Ordens & Fichas</a></li>
     </ul>
+
+    <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
+        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado}</strong></span>
+        <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
+    </div>
 </nav>
 
 <div class="container">
 
     <!-- Editar Equipamento -->
     <div class="card">
-        <h2 class="card-title">💻 Detalhes do Equipamento #${equipamento.id}</h2>
+        <h2 class="card-title"> Detalhes do Equipamento #${equipamento.id}</h2>
         <form action="${pageContext.request.contextPath}/controle" method="post">
             <input type="hidden" name="acao" value="equipamento.atualizar">
             <input type="hidden" name="id" value="${equipamento.id}">
@@ -79,8 +84,8 @@
             </div>
 
             <div class="actions-bar">
-                <button type="submit" class="btn btn-primary">✏️ Atualizar Equipamento</button>
-                <a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar" class="btn btn-secondary">⬅️ Voltar</a>
+                <button type="submit" class="btn btn-primary">✏ Atualizar Equipamento</button>
+                <a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar" class="btn btn-secondary">⬅ Voltar</a>
             </div>
         </form>
 
@@ -88,15 +93,15 @@
             <input type="hidden" name="acao" value="equipamento.excluir">
             <input type="hidden" name="id" value="${equipamento.id}">
             <input type="hidden" name="csrfToken" value="${csrfToken}">
-            <button type="submit" class="btn btn-danger">🗑️ Excluir Equipamento</button>
+            <button type="submit" class="btn btn-danger"> Excluir Equipamento</button>
         </form>
     </div>
 
     <!-- [RF06] Navegação: Orçamentos do Equipamento (Multiplicidade 1:N) -->
     <div class="card">
         <h2 class="card-title">
-            💰 Orçamentos deste Equipamento
-            <a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar&equipamentoId=${equipamento.id}" class="btn btn-sm btn-primary">➕ Criar Novo Orçamento</a>
+             Orçamentos deste Equipamento
+            <a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar&equipamentoId=${equipamento.id}" class="btn btn-sm btn-primary"> Criar Novo Orçamento</a>
         </h2>
         <div class="table-responsive">
             <table>
@@ -117,7 +122,7 @@
                         <td><span class="badge badge-${orc.status.name().toLowerCase()}">${orc.status}</span></td>
                         <td><strong>R$ ${orc.valorTotal}</strong></td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/controle?acao=orcamento.consultar&id=${orc.id}" class="btn btn-sm btn-primary">🔍 Ver Detalhes</a>
+                            <a href="${pageContext.request.contextPath}/controle?acao=orcamento.consultar&id=${orc.id}" class="btn btn-sm btn-primary"> Ver Detalhes</a>
                         </td>
                     </tr>
                 </c:forEach>

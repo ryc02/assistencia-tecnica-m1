@@ -7,11 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * [Fábrica de Comandos - Simple Factory]
- * Imagine esta classe como uma "Central Telefônica" ou um "Cardápio".
- * Quando o FrontController (o guarda de trânsito) pergunta: "Quem resolve a ação cliente.listar?",
- * esta fábrica olha no seu mapa e devolve a classe exata (ClienteListarCommand)
- * que sabe fazer esse trabalho. Isso evita milhares de "if/else" espalhados pelo código.
+ * [Requisito 8: Fábrica Simples (CommandFactory)]
+ * Centraliza o registro e a instanciação dos comandos conforme a ação informada.
+ * Classificada como fábrica simples conforme a abordagem didática da aula.
  */
 public class CommandFactory {
 
@@ -55,6 +53,11 @@ public class CommandFactory {
         comandos.put("fichaTecnica.listar", new FichaTecnicaListarCommand());
         comandos.put("fichaTecnica.consultar", new FichaTecnicaConsultarCommand());
         comandos.put("fichaTecnica.atualizar", new FichaTecnicaAtualizarCommand());
+
+        // Autenticação
+        comandos.put("login", new LoginCommand());
+        comandos.put("efetuarLogin", new EfetuarLoginCommand());
+        comandos.put("logout", new LogoutCommand());
     }
 
     /**
@@ -72,6 +75,7 @@ public class CommandFactory {
         if (acao == null) return false;
         return acao.endsWith(".inserir") || acao.endsWith(".atualizar") || acao.endsWith(".excluir")
                 || acao.endsWith(".aprovar") || acao.endsWith(".recusar")
-                || acao.endsWith(".iniciar") || acao.endsWith(".concluir") || acao.endsWith(".cancelar");
+                || acao.endsWith(".iniciar") || acao.endsWith(".concluir") || acao.endsWith(".cancelar")
+                || acao.equals("efetuarLogin");
     }
 }

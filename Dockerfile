@@ -1,22 +1,26 @@
-# Use Maven image for both build and runtime for simplicity and exact compatibility with AppLauncher
+# Etapa de build e execução usando Maven com JDK 17
 FROM maven:3.9-eclipse-temurin-17-alpine
 
-# Set working directory
+# Diretório de trabalho
 WORKDIR /app
 
-# Copy pom.xml and download dependencies (caching layer)
+# Copia pom.xml e baixa dependências (camada de cache)
 COPY pom.xml .
 RUN mvn dependency:go-offline -B
 
-# Copy the rest of the source code
+# Copia o código-fonte
 COPY src ./src
 
-# Compile the project
+# Compila o projeto
 RUN mvn compile -B
 
-# Set the port environment variable
+# Cria diretório para banco H2 persistido em arquivo
+RUN mkdir -p /app/data
+
+# Variáveis de ambiente para deploy online
 ENV PORT=8080
+ENV DATABASE_FILE=/app/data/assistenciadb
 EXPOSE 8080
 
-# Run the application using the embedded Tomcat launcher
-CMD ["mvn", "exec:java"]
+# Inicia a aplicação com Tomcat embarcado
+CMD ["mvn", "exec:exec"]

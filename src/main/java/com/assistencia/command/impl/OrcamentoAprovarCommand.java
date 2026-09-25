@@ -32,6 +32,8 @@ public class OrcamentoAprovarCommand implements ICommand {
         String previsaoStr = request.getParameter("previsaoConclusao");
         LocalDateTime previsaoConclusao = (previsaoStr != null && !previsaoStr.trim().isEmpty()) ? LocalDateTime.parse(previsaoStr) : null;
         String observacoesOrdem = request.getParameter("observacoes");
+        String prazoStr = request.getParameter("prazoGarantiaDias");
+        Integer prazoGarantiaDias = (prazoStr != null && !prazoStr.trim().isEmpty()) ? Integer.parseInt(prazoStr) : 90;
 
         // Parâmetros da Ficha Técnica com prefixo "ficha." conforme contrato HTTP
         String estadoStr = request.getParameter("ficha.estadoConservacao");
@@ -44,7 +46,7 @@ public class OrcamentoAprovarCommand implements ICommand {
         String obsFicha = request.getParameter("ficha.observacoesRecebimento");
 
         OrdemServico os = orcamentoService.aprovarOrcamento(
-                orcamentoId, responsavel, prioridade, previsaoConclusao, observacoesOrdem,
+                orcamentoId, responsavel, prioridade, previsaoConclusao, observacoesOrdem, prazoGarantiaDias,
                 estadoConservacao, acessorios, liga, possuiAvarias, descAvarias, testeInicial, obsFicha
         );
 

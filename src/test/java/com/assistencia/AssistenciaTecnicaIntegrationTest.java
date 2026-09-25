@@ -98,7 +98,7 @@ public class AssistenciaTecnicaIntegrationTest {
 
         // Aprova orçamento
         ordemServicoService.buscarPorOrcamentoId(orc.getId());
-        orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Lucas", Prioridade.NORMAL, null, "Obs", EstadoConservacao.BOM, "Cabo", true, false, null, "OK", "OK");
+        orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Lucas", Prioridade.NORMAL, null, "Obs", 90, EstadoConservacao.BOM, "Cabo", true, false, null, "OK", "OK");
 
         // Tentar alterar orçamento aprovado lança ConflictException
         assertThrows(ConflictException.class, () -> {
@@ -114,7 +114,7 @@ public class AssistenciaTecnicaIntegrationTest {
         Orcamento orc = orcamentoService.cadastrar(eq.getId(), "Tela quebrada", "Troca de vidro", new BigDecimal("300.00"), new BigDecimal("100.00"), BigDecimal.ZERO);
 
         OrdemServico os = orcamentoService.aprovarOrcamento(
-                orc.getId(), "Técnico Marcos", Prioridade.ALTA, null, "Prioritário",
+                orc.getId(), "Técnico Marcos", Prioridade.ALTA, null, "Prioritário", 90,
                 EstadoConservacao.REGULAR, "Capa protetora", true, true, "Tela trincada canto superior", "Touch ok", "Recepção ok"
         );
 
@@ -134,7 +134,7 @@ public class AssistenciaTecnicaIntegrationTest {
         Equipamento eq = equipamentoService.cadastrar(c.getId(), "Console", "Sony", "PS5", "SN-PS5-1", "Branco", "BIVOLT", "Sem vídeo");
         Orcamento orc = orcamentoService.cadastrar(eq.getId(), "Luz azul da morte", "Reballing HDMI", new BigDecimal("150.00"), new BigDecimal("250.00"), BigDecimal.ZERO);
 
-        OrdemServico os = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Silva", Prioridade.NORMAL, null, null, EstadoConservacao.BOM, "1 Controle", true, false, null, "OK", "OK");
+        OrdemServico os = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Silva", Prioridade.NORMAL, null, null, 90, EstadoConservacao.BOM, "1 Controle", true, false, null, "OK", "OK");
         FichaTecnica ft = fichaTecnicaService.buscarPorOrdemServicoId(os.getId());
 
         // Atualiza Ordem e Ficha enquanto ABERTA
@@ -162,7 +162,7 @@ public class AssistenciaTecnicaIntegrationTest {
         Equipamento eq = equipamentoService.cadastrar(c.getId(), "Notebook", "HP", "Pavilion", "SN-HP-1", "Prata", "BIVOLT", "Teclado falhando");
         Orcamento orc = orcamentoService.cadastrar(eq.getId(), "Teclado falhando", "Troca de teclado", new BigDecimal("80.00"), new BigDecimal("70.00"), BigDecimal.ZERO);
 
-        OrdemServico os = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Ana", Prioridade.NORMAL, null, null, EstadoConservacao.BOM, "Fonte", true, false, null, "OK", "OK");
+        OrdemServico os = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Ana", Prioridade.NORMAL, null, null, 90, EstadoConservacao.BOM, "Fonte", true, false, null, "OK", "OK");
 
         // Executa exclusão da Ordem Aberta
         orcamentoService.excluirOrdemAberta(os.getId());
@@ -182,7 +182,7 @@ public class AssistenciaTecnicaIntegrationTest {
         Equipamento eq = equipamentoService.cadastrar(c.getId(), "Smartphone", "Samsung", "S20", "SN-S20", "Preto", "NAO_APLICAVEL", "Bateria estufada");
         Orcamento orc = orcamentoService.cadastrar(eq.getId(), "Bateria estufada", "Troca de bateria", new BigDecimal("120.00"), new BigDecimal("60.00"), BigDecimal.ZERO);
 
-        OrdemServico os = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Gabi", Prioridade.NORMAL, null, null, EstadoConservacao.REGULAR, "Nenhum", true, true, "Bateria estufada", "OK", "OK");
+        OrdemServico os = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Gabi", Prioridade.NORMAL, null, null, 90, EstadoConservacao.REGULAR, "Nenhum", true, true, "Bateria estufada", "OK", "OK");
 
         // Inicia o atendimento (ABERTA -> EM_ANDAMENTO)
         ordemServicoService.iniciar(os.getId());
@@ -211,7 +211,7 @@ public class AssistenciaTecnicaIntegrationTest {
         Equipamento eq = equipamentoService.cadastrar(c.getId(), "Nobreak", "SMS", "Manager III", "SN-SMS", "Preto", "110V", null);
         Orcamento orc = orcamentoService.cadastrar(eq.getId(), "Troca de bateria nobreak", "Troca 2 baterias 12V", new BigDecimal("180.00"), new BigDecimal("70.00"), BigDecimal.ZERO);
 
-        OrdemServico os = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Igor", Prioridade.NORMAL, null, null, EstadoConservacao.BOM, "Nenhum", true, false, null, "OK", "OK");
+        OrdemServico os = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Igor", Prioridade.NORMAL, null, null, 90, EstadoConservacao.BOM, "Nenhum", true, false, null, "OK", "OK");
 
         // Inserção direta de segunda ficha técnica deve violar UNIQUE no banco SQL
         assertThrows(Exception.class, () -> {
@@ -236,7 +236,7 @@ public class AssistenciaTecnicaIntegrationTest {
 
         assertEquals(new BigDecimal("135.00"), orc.getValorTotal());
 
-        OrdemServico os = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Júlia", Prioridade.NORMAL, null, null, EstadoConservacao.BOM, "Nenhum", true, false, null, "OK", "OK");
+        OrdemServico os = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Júlia", Prioridade.NORMAL, null, null, 90, EstadoConservacao.BOM, "Nenhum", true, false, null, "OK", "OK");
 
         Orcamento orcAprovado = orcamentoService.buscarPorId(orc.getId());
         assertEquals(StatusOrcamento.APROVADO, orcAprovado.getStatus());
@@ -251,8 +251,8 @@ public class AssistenciaTecnicaIntegrationTest {
         Equipamento eq = equipamentoService.cadastrar(c.getId(), "Impressora", "HP", "LaserJet", "SN-HP-2", "Branca", "110V", null);
         Orcamento orc = orcamentoService.cadastrar(eq.getId(), "Papel atolado", "Limpeza roletes", new BigDecimal("20.00"), new BigDecimal("80.00"), BigDecimal.ZERO);
 
-        OrdemServico os1 = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Kátia", Prioridade.NORMAL, null, null, EstadoConservacao.BOM, "Nenhum", true, false, null, "OK", "OK");
-        OrdemServico os2 = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Kátia", Prioridade.NORMAL, null, null, EstadoConservacao.BOM, "Nenhum", true, false, null, "OK", "OK");
+        OrdemServico os1 = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Kátia", Prioridade.NORMAL, null, null, 90, EstadoConservacao.BOM, "Nenhum", true, false, null, "OK", "OK");
+        OrdemServico os2 = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Kátia", Prioridade.NORMAL, null, null, 90, EstadoConservacao.BOM, "Nenhum", true, false, null, "OK", "OK");
 
         assertEquals(os1.getId(), os2.getId());
     }
@@ -273,7 +273,7 @@ public class AssistenciaTecnicaIntegrationTest {
             executor.submit(() -> {
                 try {
                     latch.await();
-                    orcamentoService.aprovarOrcamento(orc.getId(), "Técnico " + index, Prioridade.NORMAL, null, "Obs", EstadoConservacao.BOM, "Nenhum", true, false, null, "OK", "OK");
+                    orcamentoService.aprovarOrcamento(orc.getId(), "Técnico " + index, Prioridade.NORMAL, null, "Obs", 90, EstadoConservacao.BOM, "Nenhum", true, false, null, "OK", "OK");
                 } catch (Exception ignored) {
                 }
             });
@@ -301,7 +301,7 @@ public class AssistenciaTecnicaIntegrationTest {
 
         // Tentar aprovar com avarias = true mas sem descrição de avarias (viola regra de validação da FichaTecnicaBuilder)
         assertThrows(ValidationException.class, () -> {
-            orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Lucas", Prioridade.NORMAL, null, null, EstadoConservacao.REGULAR, "Fonte", true, true, null, "OK", "OK");
+            orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Lucas", Prioridade.NORMAL, null, null, 90, EstadoConservacao.REGULAR, "Fonte", true, true, null, "OK", "OK");
         });
 
         // Comprova que o orçamento continua PENDENTE e não existe ordem criada
@@ -317,7 +317,7 @@ public class AssistenciaTecnicaIntegrationTest {
         Equipamento eq = equipamentoService.cadastrar(c.getId(), "Monitor", "Samsung", "T350", "SN-SAM-R", "Preto", "BIVOLT", null);
         Orcamento orc = orcamentoService.cadastrar(eq.getId(), "Fonte queimada", "Troca capacitor", new BigDecimal("40.00"), new BigDecimal("60.00"), BigDecimal.ZERO);
 
-        OrdemServico os = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Renato", Prioridade.NORMAL, null, null, EstadoConservacao.BOM, "Cabo VGA", true, false, null, "OK", "OK");
+        OrdemServico os = orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Renato", Prioridade.NORMAL, null, null, 90, EstadoConservacao.BOM, "Cabo VGA", true, false, null, "OK", "OK");
 
         assertThrows(Exception.class, () -> {
             TransactionManager.executeInTransaction(conn -> {
@@ -476,7 +476,7 @@ public class AssistenciaTecnicaIntegrationTest {
         Equipamento eq = equipamentoService.cadastrar(c.getId(), "Notebook", "Acer", "Nitro 5", "SN-ACER", "Preto", "BIVOLT", null);
         Orcamento orc = orcamentoService.cadastrar(eq.getId(), "Superaquecimento", "Limpeza", new BigDecimal("50.00"), new BigDecimal("100.00"), BigDecimal.ZERO);
         ordemServicoService.buscarPorOrcamentoId(orc.getId());
-        orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Otávio", Prioridade.NORMAL, null, null, EstadoConservacao.BOM, "Nenhum", true, false, null, "OK", "OK");
+        orcamentoService.aprovarOrcamento(orc.getId(), "Técnico Otávio", Prioridade.NORMAL, null, null, 90, EstadoConservacao.BOM, "Nenhum", true, false, null, "OK", "OK");
 
         try (Connection conn = ConnectionFactory.getConnection();
              PreparedStatement stmt1 = conn.prepareStatement("SELECT COUNT(*) FROM ordem_servico os LEFT JOIN ficha_tecnica ft ON os.id = ft.ordem_servico_id WHERE ft.id IS NULL;");

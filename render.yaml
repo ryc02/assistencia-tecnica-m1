@@ -4,6 +4,12 @@ services:
     env: docker
     plan: free
     region: ohio
+    disk:
+      name: assistencia-data
+      mountPath: /app/data
+      sizeGB: 1
     envVars:
       - key: PORT
         value: 8080
+      - key: DATABASE_FILE
+        value: /app/data/assistenciadb

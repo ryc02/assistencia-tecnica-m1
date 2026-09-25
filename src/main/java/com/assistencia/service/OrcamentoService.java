@@ -126,17 +126,17 @@ public class OrcamentoService {
     }
 
     /**
-     * [Transação e Regra de Negócio]
-     * Este é o coração do sistema. Quando aprovamos um orçamento, três coisas precisam 
-     * acontecer ao mesmo tempo, ou nenhuma delas acontece (Transação):
-     * 1. O orçamento muda para APROVADO.
-     * 2. Uma Ordem de Serviço (OS) é criada.
-     * 3. Uma Ficha Técnica (FT) é gerada e colada na OS.
-     * Se acabar a luz ou o banco falhar no passo 3, o sistema desfaz os passos 1 e 2.
-     * É o famoso conceito de "Tudo ou Nada" (Rollback Integral).
+     * O processo mais crítico do sistema: APROVAÇÃO DO ORÇAMENTO.
+     * Funciona em transação única:
+     * 1. Trava a linha do orçamento no banco (SELECT FOR UPDATE) pra evitar duplicidade se clicarem 2x rápido.
+     * 2. Se já estiver aprovado, só devolve a ordem existente (idempotência).
+     * 3. Calcula o total com desconto (sempre no servidor, nunca confiamos no que vem do front-end).
+     * 4. Salva a Ordem de Serviço e a Ficha Técnica atrelada.
+     * 5. Muda o orçamento pra APROVADO.
+     * Se der qualquer exceção no meio, rola um rollback automático de tudo.
      */
     public OrdemServico aprovarOrcamento(Long orcamentoId, String responsavel, Prioridade prioridade,
-                                          LocalDateTime previsaoConclusao, String observacoesOrdem,
+                                          LocalDateTime previsaoConclusao, String observacoesOrdem, Integer prazoGarantiaDias,
                                           EstadoConservacao estadoConservacao, String acessoriosEntregues,
                                           Boolean ligaNormalmente, Boolean possuiAvarias, String descricaoAvarias,
                                           String testeInicial, String observacoesFicha) throws Exception {
@@ -149,7 +149,7 @@ public class OrcamentoService {
                 throw new NotFoundException("Orçamento não encontrado com ID: " + orcamentoId);
             }
 
-            // 2. Idempotência: Se já estiver APROVADO, retorna o atendimento existente (T11)
+            // 2. Proteção contra duplo-clique: se já foi aprovado antes, devolvemos a ordem que já existe
             if (orc.getStatus() == StatusOrcamento.APROVADO) {
                 OrdemServico osExistente = ordemServicoDAO.buscarPorOrcamentoId(conn, orcamentoId);
                 if (osExistente != null) {
@@ -170,7 +170,7 @@ public class OrcamentoService {
                 throw new ValidationException("Informe um diagnóstico técnico antes de aprovar o orçamento.");
             }
 
-            // Recalcula total no servidor
+            // Recalcula total de forma segura no Back-end
             orc.setValorTotal(orc.calcularTotal());
 
             // 5. Constrói e insere a Ordem de Serviço (ABERTA)
@@ -181,6 +181,7 @@ public class OrcamentoService {
                     .status(StatusOrdem.ABERTA)
                     .previsaoConclusao(previsaoConclusao)
                     .observacoes(observacoesOrdem)
+                    .prazoGarantiaDias(prazoGarantiaDias)
                     .build();
 
             OrdemServico osSalva = ordemServicoDAO.inserir(conn, os);
@@ -208,9 +209,9 @@ public class OrcamentoService {
     }
 
     /**
-     * [Seção 7 / T06 / T14]
      * EXCLUIR ORDEM ABERTA:
-     * Remove FichaTecnica e OrdemServico e retorna Orcamento para PENDENTE em uma única transação JDBC.
+     * Aqui precisamos apagar a Ordem, apagar a Ficha e devolver o Orçamento
+     * pro status PENDENTE, tudo na mesma transação.
      */
     public void excluirOrdemAberta(Long ordemServicoId) throws Exception {
         if (ordemServicoId == null) throw new ValidationException("ID da Ordem de Serviço é obrigatório.");

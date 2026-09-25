@@ -15,13 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * [Front Controller]
- * Pense neste Servlet como o "Guarda de Trânsito" do nosso sistema.
- * Ele recebe TODAS as requisições que chegam no endereço /controle.
- * Em vez de termos um arquivo para salvar cliente, outro para listar, etc.,
- * este arquivo centraliza tudo. Ele olha para o parâmetro "acao", confere se 
- * é seguro continuar (valida o Token CSRF) e então repassa o trabalho para a 
- * classe correta (o Command).
+ * O coração da nossa arquitetura MVC.
+ * Toda requisição web passa por aqui primeiro. Ele valida a segurança (como o CSRF)
+ * e depois usa o CommandFactory pra descobrir quem realmente deve processar o pedido.
  */
 @WebServlet("/controle")
 public class FrontControllerServlet extends HttpServlet {
@@ -33,7 +29,7 @@ public class FrontControllerServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // [Requisito 11: Segurança] Valida Token CSRF em todas as requisições POST
+        // Proteção contra ataques CSRF: não aceitamos POST sem um token válido gerado pelo servidor.
         if (!CsrfUtil.isValid(request)) {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN); // HTTP 403
             request.setAttribute("erroCodigo", 403);
@@ -57,7 +53,7 @@ public class FrontControllerServlet extends HttpServlet {
             acao = "cliente.listar";
         }
 
-        // [Requisito 11: Segurança] Verifica se método HTTP GET está sendo usado para operação de alteração
+        // Bloqueia tentativas de usar GET para operações perigosas (como inserir ou deletar).
         if (CommandFactory.isPostAction(acao) && "GET".equalsIgnoreCase(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED); // HTTP 405
             request.setAttribute("erroCodigo", 405);
@@ -67,7 +63,7 @@ public class FrontControllerServlet extends HttpServlet {
             return;
         }
 
-        // [Padrão Simple Factory] Obtém o comando correspondente à ação
+        // Pede pra fábrica instanciar o comando correto com base no parâmetro "acao"
         ICommand command = CommandFactory.createCommand(acao);
 
         if (command == null) {
@@ -80,12 +76,12 @@ public class FrontControllerServlet extends HttpServlet {
         }
 
         try {
-            // [Padrão Command] Executa a ação encapsulada
+            // Dispara a lógica de negócio encapsulada no comando
             String result = command.execute(request, response);
 
             if (result != null && result.startsWith("redirect:")) {
                 String redirectUrl = request.getContextPath() + result.substring("redirect:".length());
-                // [Requisito 10: HTTP 303 Redirect após alteração]
+                // Aplica o padrão Post/Redirect/Get para evitar duplo submit ao dar F5 na página
                 response.setStatus(HttpServletResponse.SC_SEE_OTHER);
                 response.setHeader("Location", redirectUrl);
             } else if (result != null) {

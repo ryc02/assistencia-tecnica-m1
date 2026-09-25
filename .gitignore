@@ -7,3 +7,4 @@ log/
 *.iml
 *.class
 .vscode/
+data/
