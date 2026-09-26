@@ -18,6 +18,7 @@
         <li><a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar">Equipamentos</a></li>
         <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar">Orçamentos</a></li>
         <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar">Ordens & Fichas</a></li>
+        <li><a href="${pageContext.request.contextPath}/controle?acao=usuario.listar">Usuários</a></li>
     </ul>
 
     <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">

@@ -58,6 +58,11 @@ public class CommandFactory {
         comandos.put("login", new LoginCommand());
         comandos.put("efetuarLogin", new EfetuarLoginCommand());
         comandos.put("logout", new LogoutCommand());
+
+        // Usuário
+        comandos.put("usuario.listar", new UsuarioListarCommand());
+        comandos.put("usuario.inserir", new UsuarioInserirCommand());
+        comandos.put("usuario.excluir", new UsuarioExcluirCommand());
     }
 
     /**
@@ -76,6 +81,6 @@ public class CommandFactory {
         return acao.endsWith(".inserir") || acao.endsWith(".atualizar") || acao.endsWith(".excluir")
                 || acao.endsWith(".aprovar") || acao.endsWith(".recusar")
                 || acao.endsWith(".iniciar") || acao.endsWith(".concluir") || acao.endsWith(".cancelar")
-                || acao.equals("efetuarLogin");
+                || acao.equals("efetuarLogin") || acao.equals("usuario.inserir") || acao.equals("usuario.excluir");
     }
 }
