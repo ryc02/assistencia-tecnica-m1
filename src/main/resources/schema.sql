@@ -3,6 +3,14 @@
 -- Define 5 tabelas com restrições NOT NULL, UNIQUE e Foreign Keys exigidas
 -- ============================================================================
 
+CREATE TABLE IF NOT EXISTS usuario (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    senha VARCHAR(255) NOT NULL,
+    cargo VARCHAR(50) NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS cliente (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(120) NOT NULL,
