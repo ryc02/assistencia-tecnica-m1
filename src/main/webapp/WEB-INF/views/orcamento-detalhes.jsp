@@ -58,7 +58,7 @@
                     <label for="equipamentoId">Equipamento</label>
                     <select id="equipamentoId" name="equipamentoId" ${orcamento.status != 'PENDENTE' ? 'disabled' : ''} required>
                         <c:forEach var="equip" items="${equipamentos}">
-                            <option value="${equip.id}" ${orcamento.equipamento.id == eq.id ? 'selected' : ''}>
+                            <option value="${equip.id}" ${orcamento.equipamento.id == equip.id ? 'selected' : ''}>
                                 #${equip.id} - ${equip.tipo} ${equip.modelo}
                             </option>
                         </c:forEach>
