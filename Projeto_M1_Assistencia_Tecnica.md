@@ -56,14 +56,26 @@ Desenvolver uma aplicação web para uma assistência técnica fictícia. O sist
 
 Os nomes abaixo representam atributos Java. No banco, as referências serão chaves estrangeiras. IDs serão gerados pelo banco. CPF, número de endereço e número de série são textos, preservando zeros e caracteres. Listas derivadas de navegação não entram na contagem de dez atributos.
 
-### Cliente
+### Pessoa (Superclasse Abstrata — Herança POO)
+
+Superclasse que encapsula atributos comuns a qualquer indivíduo no sistema (princípio DRY), estendida por `Cliente` e `Usuario`:
 
 | Atributo | Tipo Java | Regra |
 | --- | --- | --- |
-| id | Long | Identificador gerado. |
+| id | Long | Identificador único gerado. |
 | nome | String | Obrigatório, até 120 caracteres. |
+| email | String | Opcional, até 254 caracteres; formato válido quando informado. |
+
+### Cliente (extends Pessoa)
+
+Herda `id`, `nome` e `email` de `Pessoa`:
+
+| Atributo | Tipo Java | Regra |
+| --- | --- | --- |
+| id *(herdado)* | Long | Identificador gerado. |
+| nome *(herdado)* | String | Obrigatório, até 120 caracteres. |
 | cpf | String | Dado fictício, 11 dígitos normalizados, único. |
-| email | String | Opcional, até 254 caracteres; validar formato quando informado. |
+| email *(herdado)* | String | Opcional, até 254 caracteres; validar formato quando informado. |
 | telefone | String | Obrigatório, até 20 caracteres. |
 | logradouro | String | Obrigatório, até 150 caracteres. |
 | numero | String | Obrigatório, até 20 caracteres. |
@@ -132,6 +144,19 @@ Os nomes abaixo representam atributos Java. No banco, as referências serão cha
 | dataRegistro | LocalDateTime | Gerada pelo servidor. |
 
 ## 6. Relacionamentos e integridade
+
+### 6.1 Mapeamento dos 6 Relacionamentos da POO (conforme material didático)
+
+| Relacionamento POO | Classes Envolvidas | Notação UML | Descrição / Implementação no Código |
+|---|---|---|---|
+| **1. Dependência** | `OrcamentoAprovarCommand` → `OrcamentoService` | Seta tracejada com ponta aberta `-->` | Uso transitório: Command instancia e chama métodos do Service no escopo local de execução. |
+| **2. Associação 1:1** | `OrdemServico` ↔ `FichaTecnica` | Linha sólida com multiplicidade `1` .. `1` | Atributo `ordem_servico_id UNIQUE` garante exclusividade bidirecional entre ordem e ficha. |
+| **3. Associação 1:N** | `Cliente` ↔ `Equipamento`, `Equipamento` ↔ `Orcamento` | Linha sólida com multiplicidade `1` .. `0..*` | Um Cliente possui múltiplos Equipamentos; um Equipamento possui múltiplos Orçamentos. |
+| **4. Agregação e Composição** | `OrdemServico` contendo `FichaTecnica` | Diamante preenchido (composição) | Ciclo de vida conjunto: Ficha Técnica nasce e morre junto com a Ordem de Serviço na mesma transação. |
+| **5. Herança / Generalização** | `Cliente` e `Usuario` estendem `Pessoa` | Seta sólida com triângulo fechado `—▷` | Superclasse abstrata `Pessoa` concentra `id`, `nome` e `email`; subclasses especializam o domínio. |
+| **6. Implementação / Realização** | `ClienteDAOJDBC` → `ClienteDAO`, Commands → `ICommand` | Seta tracejada com triângulo fechado `··▷` | Classes concretas implementam os contratos e métodos definidos pelas interfaces. |
+
+### 6.2 Integridade Relacional e Multiplicidades
 
 | Associação | Multiplicidade | Garantia |
 | --- | --- | --- |
