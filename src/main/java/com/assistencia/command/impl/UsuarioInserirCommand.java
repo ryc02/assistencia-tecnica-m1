@@ -1,14 +1,13 @@
 package com.assistencia.command.impl;
 
 import com.assistencia.command.ICommand;
-import com.assistencia.dao.UsuarioDAO;
-import com.assistencia.dao.jdbc.UsuarioDAOJDBC;
+import com.assistencia.service.UsuarioService;
 import com.assistencia.model.Usuario;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class UsuarioInserirCommand implements ICommand {
-    private final UsuarioDAO usuarioDAO = new UsuarioDAOJDBC();
+    private final UsuarioService usuarioService = new UsuarioService();
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) {
@@ -25,7 +24,7 @@ public class UsuarioInserirCommand implements ICommand {
             usuario.setSenha(request.getParameter("senha"));
             usuario.setCargo(request.getParameter("cargo"));
 
-            usuarioDAO.inserir(usuario);
+            usuarioService.inserir(usuario);
             return "redirect:/controle?acao=usuario.listar";
             
         } catch (Exception e) {

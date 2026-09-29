@@ -51,7 +51,7 @@ public class Orcamento {
 
     public Orcamento(Long id, Equipamento equipamento, String descricaoProblema, String diagnostico,
                      BigDecimal valorPecas, BigDecimal valorMaoDeObra, BigDecimal percentualDesconto,
-                     BigDecimal valorTotal, StatusOrcamento status, LocalDateTime dataCriacao) {
+                     StatusOrcamento status, LocalDateTime dataCriacao) {
         this.id = id;
         this.equipamento = equipamento;
         this.descricaoProblema = descricaoProblema;

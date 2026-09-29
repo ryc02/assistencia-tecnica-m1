@@ -33,7 +33,7 @@ public class AuthFilter implements Filter {
         boolean isLoginAction = "login".equals(acao) || "efetuarLogin".equals(acao);
         
         HttpSession session = request.getSession(false);
-        boolean isLoggedIn = (session != null && session.getAttribute("usuarioLogado") != null);
+        boolean isLoggedIn = session != null && session.getAttribute("usuarioLogado") != null;
 
         // Se não estiver logado e não for página de login, redireciona
         if (!isLoggedIn && !isLoginAction) {

@@ -8,6 +8,9 @@ import com.assistencia.dao.FichaTecnicaDAO;
 import com.assistencia.dao.OrcamentoDAO;
 import com.assistencia.dao.OrdemServicoDAO;
 import com.assistencia.dao.jdbc.EquipamentoDAOJDBC;
+import com.assistencia.dao.ClienteDAO;
+import com.assistencia.dao.jdbc.ClienteDAOJDBC;
+import java.sql.Connection;
 import com.assistencia.dao.jdbc.FichaTecnicaDAOJDBC;
 import com.assistencia.dao.jdbc.OrcamentoDAOJDBC;
 import com.assistencia.dao.jdbc.OrdemServicoDAOJDBC;
@@ -29,6 +32,17 @@ public class OrcamentoService {
 
     private final OrcamentoDAO orcamentoDAO = new OrcamentoDAOJDBC();
     private final EquipamentoDAO equipamentoDAO = new EquipamentoDAOJDBC();
+    private final ClienteDAO clienteDAO = new ClienteDAOJDBC();
+
+    private void stitch(Connection conn, Orcamento orc) throws Exception {
+        if (orc != null && orc.getEquipamento() != null && orc.getEquipamento().getId() != null) {
+            Equipamento eq = equipamentoDAO.buscarPorId(conn, orc.getEquipamento().getId());
+            if(eq != null && eq.getCliente() != null && eq.getCliente().getId() != null) {
+                 eq.setCliente(clienteDAO.buscarPorId(conn, eq.getCliente().getId()));
+            }
+            orc.setEquipamento(eq);
+        }
+    }
     private final OrdemServicoDAO ordemServicoDAO = new OrdemServicoDAOJDBC();
     private final FichaTecnicaDAO fichaTecnicaDAO = new FichaTecnicaDAOJDBC();
 
@@ -251,15 +265,24 @@ public class OrcamentoService {
         return TransactionManager.executeInTransaction(conn -> {
             Orcamento orc = orcamentoDAO.buscarPorId(conn, id);
             if (orc == null) throw new NotFoundException("Orçamento não encontrado com ID: " + id);
+            stitch(conn, orc);
             return orc;
         });
     }
 
     public List<Orcamento> listarTodos() throws Exception {
-        return TransactionManager.executeInTransaction(orcamentoDAO::listarTodos);
+        return TransactionManager.executeInTransaction(conn -> {
+            List<Orcamento> list = orcamentoDAO.listarTodos(conn);
+            for(Orcamento o : list) stitch(conn, o);
+            return list;
+        });
     }
 
     public List<Orcamento> listarPorEquipamento(Long equipamentoId) throws Exception {
-        return TransactionManager.executeInTransaction(conn -> orcamentoDAO.listarPorEquipamento(conn, equipamentoId));
+        return TransactionManager.executeInTransaction(conn -> {
+            List<Orcamento> list = orcamentoDAO.listarPorEquipamento(conn, equipamentoId);
+            for(Orcamento o : list) stitch(conn, o);
+            return list;
+        });
     }
 }

@@ -23,10 +23,10 @@ public class OrdemServicoAtualizarCommand implements ICommand {
         String prioridadeStr = request.getParameter("prioridade");
         Prioridade prioridade = prioridadeStr != null ? Prioridade.valueOf(prioridadeStr) : Prioridade.NORMAL;
         String previsaoStr = request.getParameter("previsaoConclusao");
-        LocalDateTime previsaoConclusao = (previsaoStr != null && !previsaoStr.trim().isEmpty()) ? LocalDateTime.parse(previsaoStr) : null;
+        LocalDateTime previsaoConclusao = previsaoStr != null && !previsaoStr.trim().isEmpty() ? LocalDateTime.parse(previsaoStr) : null;
         String observacoes = request.getParameter("observacoes");
         String garantiaStr = request.getParameter("prazoGarantiaDias");
-        Integer prazoGarantia = (garantiaStr != null && !garantiaStr.trim().isEmpty()) ? Integer.parseInt(garantiaStr) : 90;
+        Integer prazoGarantia = garantiaStr != null && !garantiaStr.trim().isEmpty() ? Integer.parseInt(garantiaStr) : 90;
 
         ordemServicoService.atualizar(id, responsavel, prioridade, previsaoConclusao, observacoes, prazoGarantia);
         return "redirect:/controle?acao=ordemServico.consultar&id=" + id;

@@ -3,6 +3,18 @@ package com.assistencia.service;
 import com.assistencia.builder.FichaTecnicaBuilder;
 import com.assistencia.dao.FichaTecnicaDAO;
 import com.assistencia.dao.jdbc.FichaTecnicaDAOJDBC;
+import com.assistencia.dao.OrdemServicoDAO;
+import com.assistencia.dao.jdbc.OrdemServicoDAOJDBC;
+import com.assistencia.dao.OrcamentoDAO;
+import com.assistencia.dao.jdbc.OrcamentoDAOJDBC;
+import com.assistencia.dao.EquipamentoDAO;
+import com.assistencia.dao.jdbc.EquipamentoDAOJDBC;
+import com.assistencia.dao.ClienteDAO;
+import com.assistencia.dao.jdbc.ClienteDAOJDBC;
+import java.sql.Connection;
+import com.assistencia.model.OrdemServico;
+import com.assistencia.model.Orcamento;
+import com.assistencia.model.Equipamento;
 import com.assistencia.exception.ConflictException;
 import com.assistencia.exception.NotFoundException;
 import com.assistencia.exception.ValidationException;
@@ -21,6 +33,28 @@ import java.util.List;
 public class FichaTecnicaService {
 
     private final FichaTecnicaDAO fichaTecnicaDAO = new FichaTecnicaDAOJDBC();
+    private final OrdemServicoDAO ordemServicoDAO = new OrdemServicoDAOJDBC();
+    private final OrcamentoDAO orcamentoDAO = new OrcamentoDAOJDBC();
+    private final EquipamentoDAO equipamentoDAO = new EquipamentoDAOJDBC();
+    private final ClienteDAO clienteDAO = new ClienteDAOJDBC();
+
+    private void stitch(Connection conn, FichaTecnica ft) throws Exception {
+        if (ft != null && ft.getOrdemServico() != null && ft.getOrdemServico().getId() != null) {
+            OrdemServico os = ordemServicoDAO.buscarPorId(conn, ft.getOrdemServico().getId());
+            if (os != null && os.getOrcamento() != null && os.getOrcamento().getId() != null) {
+                Orcamento orc = orcamentoDAO.buscarPorId(conn, os.getOrcamento().getId());
+                if (orc != null && orc.getEquipamento() != null && orc.getEquipamento().getId() != null) {
+                    Equipamento eq = equipamentoDAO.buscarPorId(conn, orc.getEquipamento().getId());
+                    if(eq != null && eq.getCliente() != null && eq.getCliente().getId() != null) {
+                         eq.setCliente(clienteDAO.buscarPorId(conn, eq.getCliente().getId()));
+                    }
+                    orc.setEquipamento(eq);
+                }
+                os.setOrcamento(orc);
+            }
+            ft.setOrdemServico(os);
+        }
+    }
 
     public void atualizar(Long id, EstadoConservacao estadoConservacao, String acessoriosEntregues,
                           Boolean ligaNormalmente, Boolean possuiAvarias, String descricaoAvarias,
@@ -65,10 +99,18 @@ public class FichaTecnicaService {
     }
 
     public FichaTecnica buscarPorOrdemServicoId(Long ordemServicoId) throws Exception {
-        return TransactionManager.executeInTransaction(conn -> fichaTecnicaDAO.buscarPorOrdemServicoId(conn, ordemServicoId));
+        return TransactionManager.executeInTransaction(conn -> {
+            FichaTecnica ft = fichaTecnicaDAO.buscarPorOrdemServicoId(conn, ordemServicoId);
+            stitch(conn, ft);
+            return ft;
+        });
     }
 
     public List<FichaTecnica> listarTodas() throws Exception {
-        return TransactionManager.executeInTransaction(fichaTecnicaDAO::listarTodas);
+        return TransactionManager.executeInTransaction(conn -> {
+            List<FichaTecnica> list = fichaTecnicaDAO.listarTodas(conn);
+            for(FichaTecnica o : list) stitch(conn, o);
+            return list;
+        });
     }
 }

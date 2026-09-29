@@ -3,6 +3,15 @@ package com.assistencia.service;
 import com.assistencia.builder.OrdemServicoBuilder;
 import com.assistencia.dao.OrdemServicoDAO;
 import com.assistencia.dao.jdbc.OrdemServicoDAOJDBC;
+import com.assistencia.dao.OrcamentoDAO;
+import com.assistencia.dao.jdbc.OrcamentoDAOJDBC;
+import com.assistencia.dao.EquipamentoDAO;
+import com.assistencia.dao.jdbc.EquipamentoDAOJDBC;
+import com.assistencia.dao.ClienteDAO;
+import com.assistencia.dao.jdbc.ClienteDAOJDBC;
+import java.sql.Connection;
+import com.assistencia.model.Orcamento;
+import com.assistencia.model.Equipamento;
 import com.assistencia.exception.ConflictException;
 import com.assistencia.exception.NotFoundException;
 import com.assistencia.exception.ValidationException;
@@ -21,6 +30,23 @@ import java.util.List;
 public class OrdemServicoService {
 
     private final OrdemServicoDAO ordemServicoDAO = new OrdemServicoDAOJDBC();
+    private final OrcamentoDAO orcamentoDAO = new OrcamentoDAOJDBC();
+    private final EquipamentoDAO equipamentoDAO = new EquipamentoDAOJDBC();
+    private final ClienteDAO clienteDAO = new ClienteDAOJDBC();
+
+    private void stitch(Connection conn, OrdemServico os) throws Exception {
+        if (os != null && os.getOrcamento() != null && os.getOrcamento().getId() != null) {
+            Orcamento orc = orcamentoDAO.buscarPorId(conn, os.getOrcamento().getId());
+            if (orc != null && orc.getEquipamento() != null && orc.getEquipamento().getId() != null) {
+                Equipamento eq = equipamentoDAO.buscarPorId(conn, orc.getEquipamento().getId());
+                if(eq != null && eq.getCliente() != null && eq.getCliente().getId() != null) {
+                     eq.setCliente(clienteDAO.buscarPorId(conn, eq.getCliente().getId()));
+                }
+                orc.setEquipamento(eq);
+            }
+            os.setOrcamento(orc);
+        }
+    }
 
     public void atualizar(Long id, String responsavel, Prioridade prioridade,
                           LocalDateTime previsaoConclusao, String observacoes, Integer prazoGarantiaDias) throws Exception {
@@ -99,15 +125,24 @@ public class OrdemServicoService {
         return TransactionManager.executeInTransaction(conn -> {
             OrdemServico os = ordemServicoDAO.buscarPorId(conn, id);
             if (os == null) throw new NotFoundException("Ordem de serviço não encontrada.");
+            stitch(conn, os);
             return os;
         });
     }
 
     public OrdemServico buscarPorOrcamentoId(Long orcamentoId) throws Exception {
-        return TransactionManager.executeInTransaction(conn -> ordemServicoDAO.buscarPorOrcamentoId(conn, orcamentoId));
+        return TransactionManager.executeInTransaction(conn -> {
+            OrdemServico os = ordemServicoDAO.buscarPorOrcamentoId(conn, orcamentoId);
+            stitch(conn, os);
+            return os;
+        });
     }
 
     public List<OrdemServico> listarTodas() throws Exception {
-        return TransactionManager.executeInTransaction(ordemServicoDAO::listarTodas);
+        return TransactionManager.executeInTransaction(conn -> {
+            List<OrdemServico> list = ordemServicoDAO.listarTodas(conn);
+            for(OrdemServico o : list) stitch(conn, o);
+            return list;
+        });
     }
 }
