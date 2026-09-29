@@ -18,6 +18,6 @@ public class UsuarioListarCommand implements ICommand {
         } catch (Exception e) {
             request.setAttribute("erro", "Erro ao listar usuários: " + e.getMessage());
         }
-        return "forward:/WEB-INF/views/usuario-listar.jsp";
+        return "/WEB-INF/views/usuario-listar.jsp";
     }
 }

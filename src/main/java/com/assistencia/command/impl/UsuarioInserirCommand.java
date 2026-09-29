@@ -13,7 +13,7 @@ public class UsuarioInserirCommand implements ICommand {
     public String execute(HttpServletRequest request, HttpServletResponse response) {
         // Se for GET, apenas abre a tela vazia
         if ("GET".equalsIgnoreCase(request.getMethod())) {
-            return "forward:/WEB-INF/views/usuario-detalhes.jsp";
+            return "/WEB-INF/views/usuario-detalhes.jsp";
         }
         
         // Se for POST, processa a inclusao
@@ -29,7 +29,7 @@ public class UsuarioInserirCommand implements ICommand {
             
         } catch (Exception e) {
             request.setAttribute("erro", "Erro ao cadastrar usuário: " + e.getMessage());
-            return "forward:/WEB-INF/views/usuario-detalhes.jsp";
+            return "/WEB-INF/views/usuario-detalhes.jsp";
         }
     }
 }
