@@ -63,6 +63,10 @@ public class CommandFactory {
         comandos.put("usuario.listar", new UsuarioListarCommand());
         comandos.put("usuario.inserir", new UsuarioInserirCommand());
         comandos.put("usuario.excluir", new UsuarioExcluirCommand());
+
+        // Segurança
+        comandos.put("acesso.negado", new AcessoNegadoCommand());
+
     }
 
     /**

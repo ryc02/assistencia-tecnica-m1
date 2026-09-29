@@ -18,11 +18,11 @@
         <li><a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar">Equipamentos</a></li>
         <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar">Orçamentos</a></li>
         <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar">Ordens & Fichas</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=usuario.listar">Usuários</a></li>
+        <c:if test="${sessionScope.usuarioLogado.cargo == 'Administrador'}"><li><a href="${pageContext.request.contextPath}/controle?acao=usuario.listar">Usuários</a></li></c:if>
     </ul>
 
     <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
-        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado}</strong></span>
+        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado.nome}</strong> &bull; <span class="badge" style="background: hsl(var(--primary) / 0.15); color: hsl(var(--primary)); font-size: 0.7rem; padding: 0.1rem 0.5rem;">${sessionScope.usuarioLogado.cargo}</span></span>
         <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
     </div>
 </nav>
