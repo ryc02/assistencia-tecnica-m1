@@ -141,6 +141,7 @@ public class OrdemServicoDAOJDBC implements OrdemServicoDAO {
         return lista;
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private OrdemServico mapRow(Connection conn, ResultSet rs) throws Exception {
         OrdemServico os = new OrdemServico();
         os.setId(rs.getLong("id"));

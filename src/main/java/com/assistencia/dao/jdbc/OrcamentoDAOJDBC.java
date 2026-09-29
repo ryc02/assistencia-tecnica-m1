@@ -128,6 +128,7 @@ public class OrcamentoDAOJDBC implements OrcamentoDAO {
         return lista;
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private Orcamento mapRow(Connection conn, ResultSet rs) throws Exception {
         Orcamento orc = new Orcamento();
         orc.setId(rs.getLong("id"));

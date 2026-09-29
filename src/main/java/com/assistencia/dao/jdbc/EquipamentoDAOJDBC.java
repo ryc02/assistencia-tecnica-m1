@@ -112,6 +112,7 @@ public class EquipamentoDAOJDBC implements EquipamentoDAO {
         return lista;
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private Equipamento mapRow(Connection conn, ResultSet rs) throws Exception {
         Equipamento eq = new Equipamento();
         eq.setId(rs.getLong("id"));

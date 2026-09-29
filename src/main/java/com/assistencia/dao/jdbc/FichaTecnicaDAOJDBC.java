@@ -120,6 +120,7 @@ public class FichaTecnicaDAOJDBC implements FichaTecnicaDAO {
         return lista;
     }
 
+    @SuppressWarnings("PMD.UnusedFormalParameter")
     private FichaTecnica mapRow(Connection conn, ResultSet rs) throws Exception {
         FichaTecnica ft = new FichaTecnica();
         ft.setId(rs.getLong("id"));

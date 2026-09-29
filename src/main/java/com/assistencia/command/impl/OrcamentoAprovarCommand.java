@@ -30,10 +30,10 @@ public class OrcamentoAprovarCommand implements ICommand {
         String prioridadeStr = request.getParameter("prioridade");
         Prioridade prioridade = prioridadeStr != null ? Prioridade.valueOf(prioridadeStr) : Prioridade.NORMAL;
         String previsaoStr = request.getParameter("previsaoConclusao");
-        LocalDateTime previsaoConclusao = (previsaoStr != null && !previsaoStr.trim().isEmpty()) ? LocalDateTime.parse(previsaoStr) : null;
+        LocalDateTime previsaoConclusao = previsaoStr != null && !previsaoStr.trim().isEmpty() ? LocalDateTime.parse(previsaoStr) : null;
         String observacoesOrdem = request.getParameter("observacoes");
         String prazoStr = request.getParameter("prazoGarantiaDias");
-        Integer prazoGarantiaDias = (prazoStr != null && !prazoStr.trim().isEmpty()) ? Integer.parseInt(prazoStr) : 90;
+        Integer prazoGarantiaDias = prazoStr != null && !prazoStr.trim().isEmpty() ? Integer.parseInt(prazoStr) : 90;
 
         // Parâmetros da Ficha Técnica com prefixo "ficha." conforme contrato HTTP
         String estadoStr = request.getParameter("ficha.estadoConservacao");

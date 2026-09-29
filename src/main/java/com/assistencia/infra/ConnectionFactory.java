@@ -30,7 +30,7 @@ public class ConnectionFactory {
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver");
             } catch (ClassNotFoundException ex) {
-                // Driver registrado via ServiceLoader se disponível
+                System.err.println("Nenhum driver JDBC encontrado!");
             }
         }
     }

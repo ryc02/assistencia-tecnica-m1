@@ -115,15 +115,34 @@ public class EquipamentoService {
         return TransactionManager.executeInTransaction(conn -> {
             Equipamento eq = equipamentoDAO.buscarPorId(conn, id);
             if (eq == null) throw new NotFoundException("Equipamento não encontrado com ID: " + id);
+            if(eq.getCliente() != null && eq.getCliente().getId() != null) {
+                eq.setCliente(clienteDAO.buscarPorId(conn, eq.getCliente().getId()));
+            }
             return eq;
         });
     }
 
     public List<Equipamento> listarTodos() throws Exception {
-        return TransactionManager.executeInTransaction(equipamentoDAO::listarTodos);
+        return TransactionManager.executeInTransaction(conn -> {
+            List<Equipamento> list = equipamentoDAO.listarTodos(conn);
+            for(Equipamento eq : list) {
+                 if(eq.getCliente() != null && eq.getCliente().getId() != null) {
+                     eq.setCliente(clienteDAO.buscarPorId(conn, eq.getCliente().getId()));
+                 }
+            }
+            return list;
+        });
     }
 
     public List<Equipamento> listarPorCliente(Long clienteId) throws Exception {
-        return TransactionManager.executeInTransaction(conn -> equipamentoDAO.listarPorCliente(conn, clienteId));
+        return TransactionManager.executeInTransaction(conn -> {
+            List<Equipamento> list = equipamentoDAO.listarPorCliente(conn, clienteId);
+            for(Equipamento eq : list) {
+                 if(eq.getCliente() != null && eq.getCliente().getId() != null) {
+                     eq.setCliente(clienteDAO.buscarPorId(conn, eq.getCliente().getId()));
+                 }
+            }
+            return list;
+        });
     }
 }
