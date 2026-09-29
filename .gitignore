@@ -8,3 +8,12 @@ log/
 *.class
 .vscode/
 data/
+
+# Tomcat work dir (gerado em runtime)
+tomcat.*/
+
+# Scripts temporarios de refatoracao
+*.py
+
+# Arquivos antigos
+*.doc
