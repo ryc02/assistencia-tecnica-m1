@@ -41,7 +41,7 @@
                     <select id="equipamentoId" name="equipamentoId" required>
                         <option value="">-- Selecione o Equipamento --</option>
                         <c:forEach var="equip" items="${equipamentos}">
-                            <option value="${equip.id}" ${equipamentoFiltro != null && equipamentoFiltro.id == eq.id ? 'selected' : ''}>
+                            <option value="${equip.id}" ${equipamentoFiltro != null && equipamentoFiltro.id == equip.id ? 'selected' : ''}>
                                 #${equip.id} - ${equip.tipo} ${equip.marca} ${equip.modelo} (${equip.cliente.nome})
                             </option>
                         </c:forEach>
