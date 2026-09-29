@@ -82,9 +82,10 @@ public class CommandFactory {
      */
     public static boolean isPostAction(String acao) {
         if (acao == null) return false;
+        if (acao.equals("usuario.inserir")) return false; // Exceção: permite GET para renderizar o formulário vazio
         return acao.endsWith(".inserir") || acao.endsWith(".atualizar") || acao.endsWith(".excluir")
                 || acao.endsWith(".aprovar") || acao.endsWith(".recusar")
                 || acao.endsWith(".iniciar") || acao.endsWith(".concluir") || acao.endsWith(".cancelar")
-                || acao.equals("efetuarLogin") || acao.equals("usuario.inserir") || acao.equals("usuario.excluir");
+                || acao.equals("efetuarLogin");
     }
 }
