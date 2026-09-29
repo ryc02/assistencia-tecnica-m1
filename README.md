@@ -62,7 +62,7 @@ Executa a suíte completa de 20 testes de integração (T01 a T20) usando o banc
 
 ```
 com.assistencia
-├── model/          → Entidades: Cliente, Equipamento, Orcamento, OrdemServico, FichaTecnica e enums
+├── model/          → Entidades: Pessoa (abstrata), Cliente, Usuario, Equipamento, Orcamento, OrdemServico, FichaTecnica e enums
 ├── builder/        → Builders: OrcamentoBuilder, OrdemServicoBuilder, ClienteBuilder, etc.
 ├── controller/     → FrontControllerServlet (Front Controller)
 ├── command/        → ICommand (interface) + 28 comandos concretos (Command Pattern)
@@ -74,9 +74,9 @@ com.assistencia
 └── exception/      → ValidationException, NotFoundException, ConflictException
 ```
 
-## Padrões de Projeto implementados
+## Padrões de Projeto e POO implementados
 
-| Padrão            | Classe(s) principal(is)                    |
+| Padrão / Conceito | Classe(s) principal(is)                    |
 |-------------------|--------------------------------------------|
 | MVC               | FrontControllerServlet + JSPs + model/service/dao |
 | DAO               | Interfaces DAO + implementações JDBC       |
@@ -84,6 +84,8 @@ com.assistencia
 | Builder           | OrcamentoBuilder, OrdemServicoBuilder, etc. |
 | Fábrica Simples   | CommandFactory                             |
 | Front Controller  | FrontControllerServlet                     |
+| Herança / POO     | Superclasse abstrata Pessoa (estendida por Cliente e Usuario) |
+| Relacionamentos   | Dependência, Associação 1:1, Associação 1:N, Composição, Herança e Implementação |
 
 ## Contrato HTTP resumido
 
