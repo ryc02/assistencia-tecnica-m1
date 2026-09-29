@@ -110,7 +110,7 @@
                         <td>${equip.tipo}</td>
                         <td>${equip.marca}</td>
                         <td><strong><a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${equip.id}" class="link-vinculo">${equip.modelo}</a></strong></td>
-                        <td>${equip.numeroSerie != null ? eq.numeroSerie : 'N/I'}</td>
+                        <td>${equip.numeroSerie != null ? equip.numeroSerie : 'N/I'}</td>
                         <td>
                             <a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${equip.id}" class="btn btn-sm btn-primary"> Detalhes</a>
                         </td>
