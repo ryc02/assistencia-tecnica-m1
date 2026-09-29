@@ -1,5 +1,7 @@
 package com.assistencia.model;
 
+import java.io.Serializable;
+
 /**
  * [Requisito POO: Herança]
  * Superclasse abstrata que representa qualquer pessoa no sistema.
@@ -10,7 +12,7 @@ package com.assistencia.model;
  *   Cliente ──────────────► Pessoa
  *   Usuario ──────────────► Pessoa
  */
-public abstract class Pessoa {
+public abstract class Pessoa implements Serializable {
 
     protected Long id;
     protected String nome;

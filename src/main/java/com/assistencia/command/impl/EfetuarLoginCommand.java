@@ -17,7 +17,7 @@ public class EfetuarLoginCommand implements ICommand {
 
         try {
             Usuario usuario = usuarioService.efetuarLogin(email, senha);
-            request.getSession(true).setAttribute("usuarioLogado", usuario.getNome());
+            request.getSession(true).setAttribute("usuarioLogado", usuario);
             request.getSession().setAttribute("usuarioCargo", usuario.getCargo());
             return "redirect:/controle?acao=cliente.listar";
         } catch (Exception e) {
