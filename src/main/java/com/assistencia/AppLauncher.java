@@ -36,6 +36,17 @@ public class AppLauncher {
         Tomcat.addServlet(ctx, "FrontControllerServlet", new FrontControllerServlet());
         ctx.addServletMappingDecoded("/controle", "FrontControllerServlet");
 
+        // Registra o Filtro de Autenticação programaticamente
+        org.apache.tomcat.util.descriptor.web.FilterDef filterDef = new org.apache.tomcat.util.descriptor.web.FilterDef();
+        filterDef.setFilterName("AuthFilter");
+        filterDef.setFilterClass(com.assistencia.infra.AuthFilter.class.getName());
+        ctx.addFilterDef(filterDef);
+
+        org.apache.tomcat.util.descriptor.web.FilterMap filterMap = new org.apache.tomcat.util.descriptor.web.FilterMap();
+        filterMap.setFilterName("AuthFilter");
+        filterMap.addURLPattern("/*");
+        ctx.addFilterMap(filterMap);
+
         System.out.println("======================================================================");
         System.out.println("🚀 Servidor Assistência Técnica M1 rodando em: http://localhost:" + port + "/controle");
         System.out.println("======================================================================");
