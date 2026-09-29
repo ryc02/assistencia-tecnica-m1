@@ -3,23 +3,16 @@ package com.assistencia.model;
 import java.time.LocalDateTime;
 
 /**
- * [Requisito 5: Entidade Cliente]
+ * [Requisito 5: Entidade Cliente — Herança]
  * Representa um cliente da assistência técnica.
- * Contém exatamente 10 atributos persistidos conforme especificação do projeto.
+ * Herda de Pessoa os atributos id, nome e email (padrão Herança — PDF Prof. Toledo §5).
  */
-public class Cliente {
+public class Cliente extends Pessoa {
 
-    // [Atributo 1/10] Identificador gerado pelo banco
-    private Long id;
-
-    // [Atributo 2/10] Nome do cliente (até 120 caracteres)
-    private String nome;
+    // id, nome e email são herdados de Pessoa
 
     // [Atributo 3/10] CPF fictício (11 dígitos, único)
     private String cpf;
-
-    // [Atributo 4/10] E-mail do cliente (opcional, até 254 caracteres)
-    private String email;
 
     // [Atributo 5/10] Telefone de contato (até 20 caracteres)
     private String telefone;
@@ -39,15 +32,12 @@ public class Cliente {
     // [Atributo 10/10] Data e hora de cadastro gerada pelo servidor
     private LocalDateTime dataCadastro;
 
-    public Cliente() {
-    }
+    public Cliente() {}
 
     public Cliente(Long id, String nome, String cpf, String email, String telefone,
                    String logradouro, String numero, String bairro, String cidade, LocalDateTime dataCadastro) {
-        this.id = id;
-        this.nome = nome;
+        super(id, nome, email);   // delega id, nome e email para Pessoa
         this.cpf = cpf;
-        this.email = email;
         this.telefone = telefone;
         this.logradouro = logradouro;
         this.numero = numero;
@@ -56,37 +46,10 @@ public class Cliente {
         this.dataCadastro = dataCadastro;
     }
 
-    public Long getId() {
-        return id;
-    }
+    // getId(), setId(), getNome(), setNome(), getEmail(), setEmail() → herdados de Pessoa
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public String getCpf() { return cpf; }
+    public void setCpf(String cpf) { this.cpf = cpf; }
 
     public String getTelefone() {
         return telefone;
