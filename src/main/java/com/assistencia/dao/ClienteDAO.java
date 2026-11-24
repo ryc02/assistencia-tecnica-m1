@@ -1,19 +1,22 @@
 package com.assistencia.dao;
 
-import com.assistencia.model.Cliente;
-
+import com.assistencia.dados.Registros;
+import com.assistencia.model.cliente.Cliente;
 import java.sql.Connection;
-import java.util.List;
 
-/**
- * [Requisito 8: Padrão DAO]
- * Contrato de persistência para a entidade Cliente.
- */
+/** [DAO - Aula 04] Contrato de persistência do Cliente. */
 public interface ClienteDAO {
-    Cliente inserir(Connection conn, Cliente cliente) throws Exception;
-    void atualizar(Connection conn, Cliente cliente) throws Exception;
-    void excluir(Connection conn, Long id) throws Exception;
-    Cliente buscarPorId(Connection conn, Long id) throws Exception;
-    Cliente buscarPorCpf(Connection conn, String cpf) throws Exception;
-    List<Cliente> listarTodos(Connection conn) throws Exception;
+    Cliente inserir(Connection conexao, Cliente cliente) throws Exception;
+
+    void atualizar(Connection conexao, Cliente cliente) throws Exception;
+
+    void excluir(Connection conexao, Long id) throws Exception;
+
+    Cliente buscarPorId(Connection conexao, Long id) throws Exception;
+
+    Cliente buscarPorCpf(Connection conexao, String cpf) throws Exception;
+
+    Registros<Cliente> listarTodos(Connection conexao) throws Exception;
+
+    Long contarEquipamentos(Connection conexao, Long clienteId) throws Exception;
 }

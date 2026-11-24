@@ -1,55 +1,48 @@
 package com.assistencia.service;
 
+import com.assistencia.dados.*;
 import com.assistencia.dao.UsuarioDAO;
-import com.assistencia.dao.jdbc.UsuarioDAOJDBC;
-import com.assistencia.exception.ValidationException;
-import com.assistencia.infra.TransactionManager;
-import com.assistencia.model.Usuario;
+import com.assistencia.infra.GerenciadorTransacao;
+import com.assistencia.model.usuario.Usuario;
+import java.sql.Connection;
+import static com.assistencia.service.RegrasDeUsuario.*;
 
-import java.util.List;
-
+/** Cadastro, listagem e exclusão de usuários do sistema. */
 public class UsuarioService {
-    
-    private final UsuarioDAO usuarioDAO = new UsuarioDAOJDBC();
+    private final UsuarioDAO usuarios;
+    private final GerenciadorTransacao transacao;
 
-    public Usuario efetuarLogin(String email, String senha) throws Exception {
-        if (email == null || email.trim().isEmpty() || senha == null || senha.trim().isEmpty()) {
-            throw new ValidationException("E-mail e senha são obrigatórios.");
-        }
-        return TransactionManager.executeInTransaction(conn -> {
-            Usuario u = usuarioDAO.buscarPorEmailSenha(conn, email, senha);
-            if (u == null) {
-                throw new ValidationException("Credenciais inválidas! Tente novamente.");
-            }
-            return u;
-        });
+    public UsuarioService(UsuarioDAO usuarios, GerenciadorTransacao transacao) {
+        this.usuarios = usuarios;
+        this.transacao = transacao;
     }
 
-    public List<Usuario> listarTodos() throws Exception {
-        return TransactionManager.executeInTransaction(usuarioDAO::listarTodos);
+    public void inserir(Campos dados) throws Exception {
+        Usuario novo = Usuario.novo(dados);
+        String email = dados.texto("email");
+        transacao.executar(conexao -> inserir(conexao, novo, email));
     }
 
-    public void inserir(Usuario usuario) throws Exception {
-        if (usuario.getNome() == null || usuario.getNome().trim().isEmpty() ||
-            usuario.getEmail() == null || usuario.getEmail().trim().isEmpty() ||
-            usuario.getSenha() == null || usuario.getSenha().trim().isEmpty() ||
-            usuario.getCargo() == null || usuario.getCargo().trim().isEmpty()) {
-            throw new ValidationException("Todos os campos do usuário são obrigatórios.");
-        }
-        
-        TransactionManager.executeInTransaction(conn -> {
-            usuarioDAO.inserir(conn, usuario);
-            return null;
-        });
+    public void excluir(Long id, Usuario logado) throws Exception {
+        exigirOutroUsuario(logado, id);
+        transacao.executar(conexao -> excluir(conexao, id));
     }
 
-    public void excluir(Long id) throws Exception {
-        if (id == null) {
-            throw new ValidationException("ID do usuário é obrigatório.");
-        }
-        TransactionManager.executeInTransaction(conn -> {
-            usuarioDAO.excluir(conn, id);
-            return null;
-        });
+    public Registros<Usuario> listarTodos() throws Exception {
+        return transacao.executar(usuarios::listarTodos);
+    }
+
+    private Void inserir(Connection conexao, Usuario novo, String email) throws Exception {
+        exigirEmailLivre(usuarios, conexao, email);
+        usuarios.inserir(conexao, novo);
+        return null;
+    }
+
+    private Void excluir(Connection conexao, Long id) throws Exception {
+        Usuario encontrado = usuarios.buscarPorId(conexao, id);
+        Usuario existente = Existencia.exigir(encontrado, "Usuário não encontrado.");
+        exigirOutroAdministrador(usuarios, conexao, existente);
+        usuarios.excluir(conexao, id);
+        return null;
     }
 }

@@ -1,11 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Login - Assistência Técnica M1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - Assistência Técnica</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=6">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=7">
     <style>
         body {
             display: flex;
@@ -99,7 +102,7 @@
         
         .forgot-password {
             font-size: 0.75rem;
-            color: hsl(var(--primary));
+            color: hsl(var(--muted-foreground));
             text-decoration: none;
             font-weight: 500;
         }
@@ -166,24 +169,34 @@
                     </svg>
                 </div>
                 <h2 class="card-title">Acesso ao Sistema</h2>
-                <p class="card-subtitle">Assistência Técnica M1</p>
+                <p class="card-subtitle">Gerenciamento de Assistência Técnica</p>
             </div>
+
+            <c:if test="${not empty erroLogin}">
+                <div class="alert alert-error" style="background: hsl(0 84.2% 60.2% / 0.1); border: 1px solid hsl(0 84.2% 60.2% / 0.25); color: hsl(0 84.2% 60.2%); padding: 0.75rem 1rem; border-radius: calc(var(--radius) - 2px); font-size: 0.85rem; margin-bottom: 1.25rem;">
+                    ⚠ ${fn:escapeXml(erroLogin)}
+                </div>
+            </c:if>
             
+            <c:if test="${param.sessao == 'expirada'}">
+                <div class="alert alert-error" style="background: hsl(38 92% 50% / 0.1); border: 1px solid hsl(38 92% 50% / 0.3); color: hsl(38 92% 40%); padding: 0.75rem 1rem; border-radius: calc(var(--radius) - 2px); font-size: 0.85rem; margin-bottom: 1.25rem;">
+                    ⚠ Sua sessão expirou ou o servidor foi reiniciado. Entre novamente para continuar.
+                </div>
+            </c:if>
+
             <form action="${pageContext.request.contextPath}/controle" method="post">
                 <input type="hidden" name="acao" value="efetuarLogin">
-                <input type="hidden" name="csrfToken" value="${csrfToken}">
+                <input type="hidden" name="csrfToken" value="${fn:escapeXml(csrfToken)}">
                 
                 <div class="form-group">
                     <label for="email">E-mail corporativo</label>
-                    <input type="email" id="email" name="email" required placeholder="admin@m1.com" autofocus>
+                    <input type="email" id="email" name="email" value="${fn:escapeXml(emailInformado)}" required placeholder="admin@m1.com" autofocus>
                 </div>
                 
                 <div class="form-group">
-                    <div class="form-group-flex">
-                        <label for="senha" style="margin-bottom: 0;">Senha de acesso</label>
-                        <a href="#" class="forgot-password" onclick="alert('Funcionalidade indisponível. Para recuperar a senha, entre em contato com o suporte em suporte@m1.com'); return false;">Esqueceu a senha?</a>
-                    </div>
+                    <label for="senha">Senha de acesso</label>
                     <input type="password" id="senha" name="senha" required placeholder="••••••••">
+                    <span class="forgot-password">Esqueceu a senha? Fale com o Administrador.</span>
                 </div>
                 
                 <button type="submit" class="btn-primary">Entrar</button>

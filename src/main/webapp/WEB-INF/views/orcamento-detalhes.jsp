@@ -1,92 +1,91 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Orçamento #${orcamento.id} - Assistência Técnica M1</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=5">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Orçamento #${fn:escapeXml(orcamento.id)} - Assistência Técnica</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=7">
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="navbar-brand">
-         Assistência Técnica M1
-    </a>
-    <ul class="navbar-nav">
-        <li><a href="${pageContext.request.contextPath}/controle?acao=cliente.listar">Clientes</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar">Equipamentos</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar" class="active">Orçamentos</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar">Ordens & Fichas</a></li>
-    </ul>
-
-    <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
-        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado.nome}</strong> &bull; <span class="badge" style="background: hsl(var(--primary) / 0.15); color: hsl(var(--primary)); font-size: 0.7rem; padding: 0.1rem 0.5rem;">${sessionScope.usuarioLogado.cargo}</span></span>
-        <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
-    </div>
-</nav>
+<jsp:include page="/WEB-INF/views/fragments/navbar.jsp">
+    <jsp:param name="active" value="orcamentos"/>
+</jsp:include>
 
 <div class="container">
 
-    <!-- Card de Detalhes e Edição do Orçamento -->
     <div class="card">
         <h2 class="card-title">
-             Orçamento #${orcamento.id}
-            <span class="badge badge-${orcamento.status.name().toLowerCase()}">${orcamento.status}</span>
+             Orçamento #${fn:escapeXml(orcamento.id)}
+            <span class="badge badge-${orcamento.status.name().toLowerCase()}">${fn:escapeXml(orcamento.status)}</span>
         </h2>
 
-        <!-- Vínculos de Navegação -->
         <div style="background: #f1f5f9; padding: 12px; border-radius: 6px; margin-bottom: 20px;">
             <strong>Equipamento:</strong>
-            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${orcamento.equipamento.id}" class="link-vinculo">
-                ${orcamento.equipamento.tipo} ${orcamento.equipamento.marca} ${orcamento.equipamento.modelo} (SN: ${orcamento.equipamento.numeroSerie})
+            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${fn:escapeXml(orcamento.equipamento.id)}" class="link-vinculo">
+                ${fn:escapeXml(orcamento.equipamento.tipo)} ${fn:escapeXml(orcamento.equipamento.marca)} ${fn:escapeXml(orcamento.equipamento.modelo)} (SN: ${fn:escapeXml(orcamento.equipamento.numeroSerie)})
             </a>
             <br>
             <strong>Cliente:</strong>
-            <a href="${pageContext.request.contextPath}/controle?acao=cliente.consultar&id=${orcamento.equipamento.cliente.id}" class="link-vinculo">
-                ${orcamento.equipamento.cliente.nome}
+            <a href="${pageContext.request.contextPath}/controle?acao=cliente.consultar&id=${fn:escapeXml(orcamento.equipamento.cliente.id)}" class="link-vinculo">
+                ${fn:escapeXml(orcamento.equipamento.cliente.nome)}
             </a>
         </div>
 
         <form action="${pageContext.request.contextPath}/controle" method="post">
             <input type="hidden" name="acao" value="orcamento.atualizar">
-            <input type="hidden" name="id" value="${orcamento.id}">
-            <input type="hidden" name="csrfToken" value="${csrfToken}">
+            <input type="hidden" name="id" value="${fn:escapeXml(orcamento.id)}">
+            <input type="hidden" name="csrfToken" value="${fn:escapeXml(csrfToken)}">
 
             <div class="form-grid">
                 <div class="form-group">
                     <label for="equipamentoId">Equipamento</label>
                     <select id="equipamentoId" name="equipamentoId" ${orcamento.status != 'PENDENTE' ? 'disabled' : ''} required>
                         <c:forEach var="equip" items="${equipamentos}">
-                            <option value="${equip.id}" ${orcamento.equipamento.id == equip.id ? 'selected' : ''}>
-                                #${equip.id} - ${equip.tipo} ${equip.modelo}
+                            <option value="${fn:escapeXml(equip.id)}" ${orcamento.equipamento.id == equip.id ? 'selected' : ''}>
+                                #${fn:escapeXml(equip.id)} - ${fn:escapeXml(equip.tipo)} ${fn:escapeXml(equip.modelo)}
                             </option>
                         </c:forEach>
                     </select>
                 </div>
                 <div class="form-group full-width">
                     <label for="descricaoProblema">Descrição do Problema</label>
-                    <textarea id="descricaoProblema" name="descricaoProblema" rows="2" ${orcamento.status != 'PENDENTE' ? 'readonly' : ''} required maxlength="2000">${orcamento.descricaoProblema}</textarea>
+                    <textarea id="descricaoProblema" name="descricaoProblema" rows="2" ${orcamento.status != 'PENDENTE' ? 'readonly' : ''} required maxlength="2000">${fn:escapeXml(orcamento.descricaoProblema)}</textarea>
                 </div>
                 <div class="form-group full-width">
                     <label for="diagnostico">Diagnóstico Técnico (Obrigatório para Aprovar)</label>
-                    <textarea id="diagnostico" name="diagnostico" rows="2" ${orcamento.status != 'PENDENTE' ? 'readonly' : ''} maxlength="2000">${orcamento.diagnostico}</textarea>
+                    <textarea id="diagnostico" name="diagnostico" rows="2" ${orcamento.status != 'PENDENTE' ? 'readonly' : ''} maxlength="2000">${fn:escapeXml(orcamento.diagnostico)}</textarea>
                 </div>
                 <div class="form-group">
                     <label for="valorPecas">Valor de Peças (R$)</label>
-                    <input type="number" id="valorPecas" name="valorPecas" step="0.01" min="0" value="${orcamento.valorPecas}" ${orcamento.status != 'PENDENTE' ? 'readonly' : ''}>
+                    <input type="number" id="valorPecas" name="valorPecas" step="0.01" min="0" value="${fn:escapeXml(orcamento.valorPecas)}" ${orcamento.status != 'PENDENTE' ? 'readonly' : ''}>
                 </div>
                 <div class="form-group">
                     <label for="valorMaoDeObra">Valor Mão de Obra (R$)</label>
-                    <input type="number" id="valorMaoDeObra" name="valorMaoDeObra" step="0.01" min="0" value="${orcamento.valorMaoDeObra}" ${orcamento.status != 'PENDENTE' ? 'readonly' : ''}>
+                    <input type="number" id="valorMaoDeObra" name="valorMaoDeObra" step="0.01" min="0" value="${fn:escapeXml(orcamento.valorMaoDeObra)}" ${orcamento.status != 'PENDENTE' ? 'readonly' : ''}>
                 </div>
                 <div class="form-group">
                     <label for="percentualDesconto">Desconto (%)</label>
-                    <input type="number" id="percentualDesconto" name="percentualDesconto" step="0.01" min="0" max="100" value="${orcamento.percentualDesconto}" ${orcamento.status != 'PENDENTE' ? 'readonly' : ''}>
+                    <input type="number" id="percentualDesconto" name="percentualDesconto" step="0.01" min="0" max="100" value="${fn:escapeXml(orcamento.percentualDesconto)}" ${orcamento.status != 'PENDENTE' ? 'readonly' : ''}>
+                </div>
+                <div class="form-group full-width">
+                    <label>Adicionais (padrão Decorator)</label>
+                    <c:forEach var="tipo" items="${tiposAdicionais}">
+                        <label style="display:inline-block; margin-right:14px; font-weight:normal;">
+                            <input type="checkbox" name="adicionais" value="${fn:escapeXml(tipo.nome)}"
+                                   ${orcamento.adicionais.contains(tipo.nome) ? 'checked' : ''}
+                                   ${orcamento.status != 'PENDENTE' ? 'disabled' : ''}>
+                            ${fn:escapeXml(tipo.descricao)} (+ R$ ${fn:escapeXml(tipo.valor)})
+                        </label>
+                    </c:forEach>
+                    <p style="margin-top:6px;"><strong>Composição:</strong> ${fn:escapeXml(orcamento.descricaoServico)}</p>
                 </div>
                 <div class="form-group" style="background: #e0f2fe; padding: 10px; border-radius: 6px;">
                     <label>Valor Total Calculado no Servidor</label>
-                    <div style="font-size: 1.4rem; font-weight: bold; color: var(--primary);">R$ ${orcamento.valorTotal}</div>
+                    <div style="font-size: 1.4rem; font-weight: bold; color: hsl(var(--primary));">R$ ${fn:escapeXml(orcamento.valorTotal)}</div>
                 </div>
             </div>
 
@@ -100,21 +99,20 @@
         <c:if test="${orcamento.status == 'PENDENTE'}">
             <form action="${pageContext.request.contextPath}/controle" method="post" style="margin-top: 10px;">
                 <input type="hidden" name="acao" value="orcamento.recusar">
-                <input type="hidden" name="id" value="${orcamento.id}">
-                <input type="hidden" name="csrfToken" value="${csrfToken}">
+                <input type="hidden" name="id" value="${fn:escapeXml(orcamento.id)}">
+                <input type="hidden" name="csrfToken" value="${fn:escapeXml(csrfToken)}">
                 <button type="submit" class="btn btn-warning"> Recusar Orçamento</button>
             </form>
 
             <form action="${pageContext.request.contextPath}/controle" method="post" style="margin-top: 10px;" onsubmit="return confirm('Excluir orçamento?');">
                 <input type="hidden" name="acao" value="orcamento.excluir">
-                <input type="hidden" name="id" value="${orcamento.id}">
-                <input type="hidden" name="csrfToken" value="${csrfToken}">
+                <input type="hidden" name="id" value="${fn:escapeXml(orcamento.id)}">
+                <input type="hidden" name="csrfToken" value="${fn:escapeXml(csrfToken)}">
                 <button type="submit" class="btn btn-danger"> Excluir Orçamento</button>
             </form>
         </c:if>
     </div>
 
-    <!-- [RF05 / RF04] Seção de Aprovação do Orçamento (Gera Ordem e Ficha na mesma Transação) -->
     <c:if test="${orcamento.status == 'PENDENTE'}">
         <div class="card" style="border: 2px solid var(--success);">
             <h2 class="card-title" style="color: var(--success);">
@@ -126,10 +124,10 @@
 
             <form action="${pageContext.request.contextPath}/controle" method="post">
                 <input type="hidden" name="acao" value="orcamento.aprovar">
-                <input type="hidden" name="id" value="${orcamento.id}">
-                <input type="hidden" name="csrfToken" value="${csrfToken}">
+                <input type="hidden" name="id" value="${fn:escapeXml(orcamento.id)}">
+                <input type="hidden" name="csrfToken" value="${fn:escapeXml(csrfToken)}">
 
-                <h4 style="margin-bottom: 10px; color: var(--primary);"> Dados da Ordem de Serviço</h4>
+                <h4 style="margin-bottom: 10px; color: hsl(var(--primary));"> Dados da Ordem de Serviço</h4>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="responsavel">Técnico Responsável *</label>
@@ -153,7 +151,7 @@
                     </div>
                 </div>
 
-                <h4 style="margin: 20px 0 10px 0; color: var(--primary);"> Dados da Ficha Técnica (Recepção)</h4>
+                <h4 style="margin: 20px 0 10px 0; color: hsl(var(--primary));"> Dados da Ficha Técnica (Recepção)</h4>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="ficha.estadoConservacao">Estado de Conservação *</label>
@@ -201,16 +199,15 @@
         </div>
     </c:if>
 
-    <!-- [RF06] Exibe Ordem e Ficha vinculadas se já aprovado -->
     <c:if test="${orcamento.status == 'APROVADO' && ordemServico != null}">
-        <div class="card" style="border: 2px solid var(--primary);">
+        <div class="card" style="border: 2px solid hsl(var(--primary));">
             <h2 class="card-title">
-                 Atendimento Vinculado (Ordem de Serviço #${ordemServico.id})
-                <a href="${pageContext.request.contextPath}/controle?acao=ordemServico.consultar&id=${ordemServico.id}" class="btn btn-sm btn-primary"> Ir para Atendimento Completo</a>
+                 Atendimento Vinculado (Ordem de Serviço #${fn:escapeXml(ordemServico.id)})
+                <a href="${pageContext.request.contextPath}/controle?acao=ordemServico.consultar&id=${fn:escapeXml(ordemServico.id)}" class="btn btn-sm btn-primary"> Ir para Atendimento Completo</a>
             </h2>
-            <p><strong>Status da Ordem:</strong> <span class="badge badge-${ordemServico.status.name().toLowerCase()}">${ordemServico.status}</span></p>
-            <p><strong>Técnico Responsável:</strong> ${ordemServico.responsavel}</p>
-            <p><strong>Ficha Técnica ID:</strong> #${fichaTecnica.id} (Estado: ${fichaTecnica.estadoConservacao})</p>
+            <p><strong>Status da Ordem:</strong> <span class="badge badge-${ordemServico.status.name().toLowerCase()}">${fn:escapeXml(ordemServico.status)}</span></p>
+            <p><strong>Técnico Responsável:</strong> ${fn:escapeXml(ordemServico.responsavel)}</p>
+            <p><strong>Ficha Técnica ID:</strong> #${fn:escapeXml(fichaTecnica.id)} (Estado: ${fn:escapeXml(fichaTecnica.estadoConservacao)})</p>
         </div>
     </c:if>
 

@@ -1,23 +1,21 @@
 package com.assistencia.command.impl;
 
-import com.assistencia.command.ICommand;
+import com.assistencia.command.*;
 import com.assistencia.service.EquipamentoService;
+import javax.servlet.http.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-/**
- * [Requisito 8: Padrão Command & Requisito 10: HTTP 303 Redirect]
- * Comando para excluir equipamento.
- */
+/** [Command - Aula 07] Exclui um equipamento sem orçamentos. */
 public class EquipamentoExcluirCommand implements ICommand {
+    private final EquipamentoService servico;
 
-    private final EquipamentoService equipamentoService = new EquipamentoService();
+    public EquipamentoExcluirCommand(EquipamentoService servico) {
+        this.servico = servico;
+    }
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Long id = Long.parseLong(request.getParameter("id"));
-        equipamentoService.excluir(id);
-        return "redirect:/controle?acao=equipamento.listar";
+    public String execute(HttpServletRequest requisicao, HttpServletResponse resposta) throws Exception {
+        Long id = ParametrosHttp.idObrigatorio(requisicao, "id", "equipamento");
+        servico.excluir(id);
+        return Destino.redirecionar("equipamento.listar");
     }
 }

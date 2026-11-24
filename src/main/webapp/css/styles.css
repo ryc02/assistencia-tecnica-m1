@@ -1,14 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-/* ============================================================================
-   [shadcn/ui Aesthetic] Sistema de Assistência Técnica (M1)
-   Minimalist, polished, monochromatic design system
-   ============================================================================ */
-
 :root {
-  /* shadcn/ui Default Zinc Light Theme */
-  --background: 0 0% 100%;       /* hsl(0, 0%, 100%) */
-  --foreground: 240 10% 3.9%;    /* hsl(240, 10%, 3.9%) */
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
   --card: 0 0% 100%;
   --card-foreground: 240 10% 3.9%;
   --popover: 0 0% 100%;
@@ -49,7 +43,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Header & Navbar */
+/* Navbar */
 .navbar {
     background: hsl(var(--background));
     color: hsl(var(--foreground));
@@ -100,7 +94,7 @@ body {
     font-weight: 500;
 }
 
-/* Container & Cards */
+/* Cards */
 .container {
     max-width: 1100px;
     margin: 3rem auto;
@@ -132,7 +126,7 @@ body {
     padding: 0 1.5rem 1.5rem 1.5rem;
 }
 
-/* Forms & Inputs */
+/* Formulários */
 .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -184,7 +178,7 @@ input:disabled, select:disabled, textarea:disabled {
     opacity: 0.5;
 }
 
-/* Buttons */
+/* Botões */
 .btn {
     display: inline-flex;
     align-items: center;
@@ -256,7 +250,7 @@ input:disabled, select:disabled, textarea:disabled {
     margin-top: 1.5rem;
 }
 
-/* Tables */
+/* Tabelas */
 .table-responsive {
     width: 100%;
     overflow-x: auto;
@@ -294,7 +288,7 @@ tr:hover td {
     background-color: hsl(var(--muted) / 0.5);
 }
 
-/* Badges for Status */
+/* Status */
 .badge {
     display: inline-flex;
     align-items: center;
@@ -306,7 +300,6 @@ tr:hover td {
     transition: background-color 0.2s;
 }
 
-/* shadcn-style badges: default, secondary, outline, destructive */
 .badge-pendente, .badge-em_andamento { 
     background-color: hsl(var(--secondary)); 
     color: hsl(var(--secondary-foreground));
@@ -330,7 +323,7 @@ tr:hover td {
     border-color: hsl(var(--border));
 }
 
-/* Alerts */
+/* Alertas */
 .alert {
     position: relative;
     width: 100%;
@@ -361,7 +354,7 @@ tr:hover td {
     color: hsl(var(--muted-foreground));
 }
 
-/* Emphasize details grid */
+/* Detalhes (dl) */
 dl {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -379,4 +372,79 @@ dd {
     font-size: 0.875rem;
     font-weight: 500;
     color: hsl(var(--foreground));
+}
+
+.navbar { gap: 1rem; }
+.navbar-brand { display: inline-flex; align-items: center; gap: 0.6rem; white-space: nowrap; }
+.navbar-logo {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2rem; height: 2rem; border-radius: calc(var(--radius) - 2px);
+    background: hsl(var(--primary)); color: hsl(var(--primary-foreground));
+}
+.navbar-nav a { display: inline-flex; align-items: center; gap: 0.45rem; white-space: nowrap; }
+.navbar-nav svg { width: 16px; height: 16px; flex-shrink: 0; }
+.user-actions { display: flex; align-items: center; gap: 1rem; font-size: 0.875rem; }
+.user-info { display: inline-flex; align-items: center; gap: 0.6rem; }
+.user-avatar {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2rem; height: 2rem; border-radius: 999px; font-weight: 600; text-transform: uppercase;
+    background: hsl(var(--secondary)); border: 1px solid hsl(var(--border));
+}
+.user-text { display: flex; flex-direction: column; line-height: 1.2; }
+.user-text small { color: hsl(var(--muted-foreground)); font-size: 0.75rem; }
+.logout-link {
+    display: inline-flex; align-items: center; gap: 0.35rem; text-decoration: none; font-weight: 500;
+    color: hsl(var(--destructive)); padding: 0.4rem 0.6rem; border-radius: calc(var(--radius) - 2px);
+}
+.logout-link:hover { background: hsl(var(--destructive) / 0.08); }
+.logout-link svg { width: 16px; height: 16px; }
+
+/* Alertas usados nas telas */
+.alert-error {
+    border-color: hsl(var(--destructive) / 0.35);
+    background: hsl(var(--destructive) / 0.07);
+    color: hsl(var(--destructive));
+}
+.alert-success {
+    border-color: hsl(142 71% 35% / 0.35);
+    background: hsl(142 71% 35% / 0.08);
+    color: hsl(142 71% 28%);
+}
+
+/* Página de erro */
+.card-erro { display: flex; gap: 1.25rem; padding: 1.75rem; border-left: 4px solid hsl(var(--destructive)); }
+.erro-icone {
+    flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center;
+    width: 3rem; height: 3rem; border-radius: 999px;
+    background: hsl(var(--destructive) / 0.1); color: hsl(var(--destructive));
+}
+.erro-codigo { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: hsl(var(--destructive)); }
+.erro-titulo { font-size: 1.25rem; font-weight: 600; margin: 0.25rem 0 0.5rem; letter-spacing: -0.02em; }
+.erro-mensagem { color: hsl(var(--muted-foreground)); }
+
+.actions-bar { flex-wrap: wrap; }
+.table-container { width: 100%; overflow-x: auto; }
+
+/* Tablet: menu vai para uma segunda linha e rola na horizontal */
+@media (max-width: 960px) {
+    .navbar { flex-wrap: wrap; padding: 0.75rem 1rem; }
+    .navbar-nav { order: 3; width: 100%; overflow-x: auto; padding-bottom: 0.25rem; }
+    .user-text small { display: none; }
+}
+
+/* Celular */
+@media (max-width: 640px) {
+    .container { margin: 1.25rem auto; padding: 0 0.75rem; }
+    .card-title { padding: 1.25rem 1rem 0; margin-bottom: 1rem; font-size: 1rem; flex-wrap: wrap; gap: 0.5rem; }
+    .card form, .card > .table-responsive { padding: 0 1rem 1rem; }
+    .form-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .actions-bar { flex-direction: column; }
+    .actions-bar .btn, .card form > .btn { width: 100%; }
+    .user-text, .logout-link span { display: none; }
+    .navbar-nav a { padding: 0.45rem 0.7rem; }
+    th, td { padding: 0.6rem 0.75rem; }
+    table { min-width: 560px; }
+    td { white-space: nowrap; }
+    .card-erro { flex-direction: column; padding: 1.25rem; }
+    dl { padding: 0 1rem 1rem; gap: 1rem; }
 }

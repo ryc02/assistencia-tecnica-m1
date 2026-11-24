@@ -1,23 +1,21 @@
 package com.assistencia.command.impl;
 
-import com.assistencia.command.ICommand;
+import com.assistencia.command.*;
 import com.assistencia.service.OrdemServicoService;
+import javax.servlet.http.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-/**
- * [Requisito 8: Padrão Command & Seção 6 Transições de Estado]
- * Comando para cancelar a ordem de serviço.
- */
+/** [Command - Aula 07] Cancela a ordem. */
 public class OrdemServicoCancelarCommand implements ICommand {
+    private final OrdemServicoService servico;
 
-    private final OrdemServicoService ordemServicoService = new OrdemServicoService();
+    public OrdemServicoCancelarCommand(OrdemServicoService servico) {
+        this.servico = servico;
+    }
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Long id = Long.parseLong(request.getParameter("id"));
-        ordemServicoService.cancelar(id);
-        return "redirect:/controle?acao=ordemServico.consultar&id=" + id;
+    public String execute(HttpServletRequest requisicao, HttpServletResponse resposta) throws Exception {
+        Long id = ParametrosHttp.idObrigatorio(requisicao, "id", "ordem de serviço");
+        servico.cancelar(id);
+        return Destino.redirecionar("ordemServico.consultar", id);
     }
 }

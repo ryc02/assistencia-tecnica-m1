@@ -1,39 +1,27 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Orçamentos - Assistência Técnica M1</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=5">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Orçamentos - Assistência Técnica</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=7">
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="navbar-brand">
-         Assistência Técnica M1
-    </a>
-    <ul class="navbar-nav">
-        <li><a href="${pageContext.request.contextPath}/controle?acao=cliente.listar">Clientes</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar">Equipamentos</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar" class="active">Orçamentos</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar">Ordens & Fichas</a></li>
-    </ul>
-
-    <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
-        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado.nome}</strong> &bull; <span class="badge" style="background: hsl(var(--primary) / 0.15); color: hsl(var(--primary)); font-size: 0.7rem; padding: 0.1rem 0.5rem;">${sessionScope.usuarioLogado.cargo}</span></span>
-        <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
-    </div>
-</nav>
+<jsp:include page="/WEB-INF/views/fragments/navbar.jsp">
+    <jsp:param name="active" value="orcamentos"/>
+</jsp:include>
 
 <div class="container">
 
-    <!-- [RF03] Form de Cadastro de Orçamento -->
     <div class="card">
         <h2 class="card-title"> Criar Novo Orçamento</h2>
         <form action="${pageContext.request.contextPath}/controle" method="post">
             <input type="hidden" name="acao" value="orcamento.inserir">
-            <input type="hidden" name="csrfToken" value="${csrfToken}">
+            <input type="hidden" name="csrfToken" value="${fn:escapeXml(csrfToken)}">
 
             <div class="form-grid">
                 <div class="form-group">
@@ -41,8 +29,8 @@
                     <select id="equipamentoId" name="equipamentoId" required>
                         <option value="">-- Selecione o Equipamento --</option>
                         <c:forEach var="equip" items="${equipamentos}">
-                            <option value="${equip.id}" ${equipamentoFiltro != null && equipamentoFiltro.id == equip.id ? 'selected' : ''}>
-                                #${equip.id} - ${equip.tipo} ${equip.marca} ${equip.modelo} (${equip.cliente.nome})
+                            <option value="${fn:escapeXml(equip.id)}" ${equipamentoFiltro != null && equipamentoFiltro.id == equip.id ? 'selected' : ''}>
+                                #${fn:escapeXml(equip.id)} - ${fn:escapeXml(equip.tipo)} ${fn:escapeXml(equip.marca)} ${fn:escapeXml(equip.modelo)} (${fn:escapeXml(equip.cliente.nome)})
                             </option>
                         </c:forEach>
                     </select>
@@ -67,6 +55,15 @@
                     <label for="percentualDesconto">Desconto (%)</label>
                     <input type="number" id="percentualDesconto" name="percentualDesconto" step="0.01" min="0" max="100" value="0.00">
                 </div>
+                <div class="form-group full-width">
+                    <label>Adicionais (padrão Decorator)</label>
+                    <c:forEach var="tipo" items="${tiposAdicionais}">
+                        <label style="display:inline-block; margin-right:14px; font-weight:normal;">
+                            <input type="checkbox" name="adicionais" value="${fn:escapeXml(tipo.nome)}">
+                            ${fn:escapeXml(tipo.descricao)} (+ R$ ${fn:escapeXml(tipo.valor)})
+                        </label>
+                    </c:forEach>
+                </div>
             </div>
             <div style="margin-top: 16px;">
                 <button type="submit" class="btn btn-primary"> Criar Orçamento (Calcula Total no Servidor)</button>
@@ -74,12 +71,11 @@
         </form>
     </div>
 
-    <!-- Listagem de Orçamentos -->
     <div class="card">
         <h2 class="card-title">
              Orçamentos Cadastrados
             <c:if test="${equipamentoFiltro != null}">
-                <span style="font-size: 0.9rem; font-weight: normal;">(Filtrado por Equipamento #${equipamentoFiltro.id} - ${equipamentoFiltro.modelo})</span>
+                <span style="font-size: 0.9rem; font-weight: normal;">(Filtrado por Equipamento #${fn:escapeXml(equipamentoFiltro.id)} - ${fn:escapeXml(equipamentoFiltro.modelo)})</span>
             </c:if>
         </h2>
         <div class="table-responsive">
@@ -97,18 +93,18 @@
                 <tbody>
                 <c:forEach var="orc" items="${orcamentos}">
                     <tr>
-                        <td>${orc.id}</td>
+                        <td>${fn:escapeXml(orc.id)}</td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${orc.equipamento.id}" class="link-vinculo">
-                                ${orc.equipamento.tipo} ${orc.equipamento.modelo}
+                            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${fn:escapeXml(orc.equipamento.id)}" class="link-vinculo">
+                                ${fn:escapeXml(orc.equipamento.tipo)} ${fn:escapeXml(orc.equipamento.modelo)}
                             </a>
-                            <br><small style="color: var(--text-muted);">${orc.equipamento.cliente.nome}</small>
+                            <br><small style="color: var(--text-muted);">${fn:escapeXml(orc.equipamento.cliente.nome)}</small>
                         </td>
-                        <td>${orc.descricaoProblema}</td>
-                        <td><span class="badge badge-${orc.status.name().toLowerCase()}">${orc.status}</span></td>
-                        <td><strong>R$ ${orc.valorTotal}</strong></td>
+                        <td>${fn:escapeXml(orc.descricaoProblema)}</td>
+                        <td><span class="badge badge-${orc.status.name().toLowerCase()}">${fn:escapeXml(orc.status)}</span></td>
+                        <td><strong>R$ ${fn:escapeXml(orc.valorTotal)}</strong></td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/controle?acao=orcamento.consultar&id=${orc.id}" class="btn btn-sm btn-primary"> Visualizar / Aprovar</a>
+                            <a href="${pageContext.request.contextPath}/controle?acao=orcamento.consultar&id=${fn:escapeXml(orc.id)}" class="btn btn-sm btn-primary"> Visualizar / Aprovar</a>
                         </td>
                     </tr>
                 </c:forEach>

@@ -1,23 +1,21 @@
 package com.assistencia.command.impl;
 
-import com.assistencia.command.ICommand;
+import com.assistencia.command.*;
 import com.assistencia.service.OrdemServicoService;
+import javax.servlet.http.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-/**
- * [Requisito 8: Padrão Command & Seção 6 Transições de Estado]
- * Comando para concluir a ordem de serviço.
- */
+/** [Command - Aula 07] Conclui a ordem (EM_ANDAMENTO para CONCLUIDA). */
 public class OrdemServicoConcluirCommand implements ICommand {
+    private final OrdemServicoService servico;
 
-    private final OrdemServicoService ordemServicoService = new OrdemServicoService();
+    public OrdemServicoConcluirCommand(OrdemServicoService servico) {
+        this.servico = servico;
+    }
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Long id = Long.parseLong(request.getParameter("id"));
-        ordemServicoService.concluir(id);
-        return "redirect:/controle?acao=ordemServico.consultar&id=" + id;
+    public String execute(HttpServletRequest requisicao, HttpServletResponse resposta) throws Exception {
+        Long id = ParametrosHttp.idObrigatorio(requisicao, "id", "ordem de serviço");
+        servico.concluir(id);
+        return Destino.redirecionar("ordemServico.consultar", id);
     }
 }

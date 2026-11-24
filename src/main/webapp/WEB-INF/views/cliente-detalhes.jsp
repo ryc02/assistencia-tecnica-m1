@@ -1,73 +1,61 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Detalhes do Cliente - Assistência Técnica M1</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=5">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Detalhes do Cliente - Assistência Técnica</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=7">
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="navbar-brand">
-         Assistência Técnica M1
-    </a>
-    <ul class="navbar-nav">
-        <li><a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="active">Clientes</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar">Equipamentos</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar">Orçamentos</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar">Ordens & Fichas</a></li>
-    </ul>
-
-    <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
-        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado.nome}</strong> &bull; <span class="badge" style="background: hsl(var(--primary) / 0.15); color: hsl(var(--primary)); font-size: 0.7rem; padding: 0.1rem 0.5rem;">${sessionScope.usuarioLogado.cargo}</span></span>
-        <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
-    </div>
-</nav>
+<jsp:include page="/WEB-INF/views/fragments/navbar.jsp">
+    <jsp:param name="active" value="clientes"/>
+</jsp:include>
 
 <div class="container">
 
-    <!-- Editar / Visualizar Cliente -->
     <div class="card">
-        <h2 class="card-title"> Detalhes do Cliente #${cliente.id}</h2>
+        <h2 class="card-title"> Detalhes do Cliente #${fn:escapeXml(cliente.id)}</h2>
         <form action="${pageContext.request.contextPath}/controle" method="post">
             <input type="hidden" name="acao" value="cliente.atualizar">
-            <input type="hidden" name="id" value="${cliente.id}">
-            <input type="hidden" name="csrfToken" value="${csrfToken}">
+            <input type="hidden" name="id" value="${fn:escapeXml(cliente.id)}">
+            <input type="hidden" name="csrfToken" value="${fn:escapeXml(csrfToken)}">
 
             <div class="form-grid">
                 <div class="form-group">
                     <label for="nome">Nome Completo</label>
-                    <input type="text" id="nome" name="nome" value="${cliente.nome}" required maxlength="120">
+                    <input type="text" id="nome" name="nome" value="${fn:escapeXml(cliente.nome)}" required maxlength="120">
                 </div>
                 <div class="form-group">
                     <label for="cpf">CPF</label>
-                    <input type="text" id="cpf" name="cpf" value="${cliente.cpf}" required maxlength="14">
+                    <input type="text" id="cpf" name="cpf" value="${fn:escapeXml(cliente.cpf)}" required maxlength="14">
                 </div>
                 <div class="form-group">
                     <label for="email">E-mail</label>
-                    <input type="email" id="email" name="email" value="${cliente.email}" maxlength="254">
+                    <input type="email" id="email" name="email" value="${fn:escapeXml(cliente.email)}" maxlength="254">
                 </div>
                 <div class="form-group">
                     <label for="telefone">Telefone</label>
-                    <input type="text" id="telefone" name="telefone" value="${cliente.telefone}" required maxlength="20">
+                    <input type="text" id="telefone" name="telefone" value="${fn:escapeXml(cliente.telefone)}" required maxlength="20">
                 </div>
                 <div class="form-group">
                     <label for="logradouro">Logradouro</label>
-                    <input type="text" id="logradouro" name="logradouro" value="${cliente.logradouro}" required maxlength="150">
+                    <input type="text" id="logradouro" name="logradouro" value="${fn:escapeXml(cliente.logradouro)}" required maxlength="150">
                 </div>
                 <div class="form-group">
                     <label for="numero">Número</label>
-                    <input type="text" id="numero" name="numero" value="${cliente.numero}" required maxlength="20">
+                    <input type="text" id="numero" name="numero" value="${fn:escapeXml(cliente.numero)}" required maxlength="20">
                 </div>
                 <div class="form-group">
                     <label for="bairro">Bairro</label>
-                    <input type="text" id="bairro" name="bairro" value="${cliente.bairro}" required maxlength="80">
+                    <input type="text" id="bairro" name="bairro" value="${fn:escapeXml(cliente.bairro)}" required maxlength="80">
                 </div>
                 <div class="form-group">
                     <label for="cidade">Cidade</label>
-                    <input type="text" id="cidade" name="cidade" value="${cliente.cidade}" required maxlength="80">
+                    <input type="text" id="cidade" name="cidade" value="${fn:escapeXml(cliente.cidade)}" required maxlength="80">
                 </div>
             </div>
 
@@ -79,17 +67,16 @@
 
         <form action="${pageContext.request.contextPath}/controle" method="post" style="margin-top: 10px;" onsubmit="return confirm('Deseja realmente excluir este cliente?');">
             <input type="hidden" name="acao" value="cliente.excluir">
-            <input type="hidden" name="id" value="${cliente.id}">
-            <input type="hidden" name="csrfToken" value="${csrfToken}">
+            <input type="hidden" name="id" value="${fn:escapeXml(cliente.id)}">
+            <input type="hidden" name="csrfToken" value="${fn:escapeXml(csrfToken)}">
             <button type="submit" class="btn btn-danger"> Excluir Cliente</button>
         </form>
     </div>
 
-    <!-- [RF06] Navegação: Equipamentos do Cliente (Multiplicidade 1:N) -->
     <div class="card">
         <h2 class="card-title">
              Equipamentos deste Cliente
-            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar&clienteId=${cliente.id}" class="btn btn-sm btn-primary"> Novo Equipamento</a>
+            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar&clienteId=${fn:escapeXml(cliente.id)}" class="btn btn-sm btn-primary"> Novo Equipamento</a>
         </h2>
         <div class="table-responsive">
             <table>
@@ -106,13 +93,13 @@
                 <tbody>
                 <c:forEach var="equip" items="${equipamentos}">
                     <tr>
-                        <td>${equip.id}</td>
-                        <td>${equip.tipo}</td>
-                        <td>${equip.marca}</td>
-                        <td><strong><a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${equip.id}" class="link-vinculo">${equip.modelo}</a></strong></td>
-                        <td>${equip.numeroSerie != null ? equip.numeroSerie : 'N/I'}</td>
+                        <td>${fn:escapeXml(equip.id)}</td>
+                        <td>${fn:escapeXml(equip.tipo)}</td>
+                        <td>${fn:escapeXml(equip.marca)}</td>
+                        <td><strong><a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${fn:escapeXml(equip.id)}" class="link-vinculo">${fn:escapeXml(equip.modelo)}</a></strong></td>
+                        <td>${equip.numeroSerie != null ? fn:escapeXml(equip.numeroSerie) : 'N/I'}</td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${equip.id}" class="btn btn-sm btn-primary"> Detalhes</a>
+                            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${fn:escapeXml(equip.id)}" class="btn btn-sm btn-primary"> Detalhes</a>
                         </td>
                     </tr>
                 </c:forEach>

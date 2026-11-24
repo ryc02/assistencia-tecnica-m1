@@ -1,15 +1,14 @@
 package com.assistencia.command.impl;
 
-import com.assistencia.command.ICommand;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import com.assistencia.command.*;
+import com.assistencia.infra.SessaoUsuario;
+import javax.servlet.http.*;
 
+/** [Command - Aula 07] Encerra a sessão do usuário. */
 public class LogoutCommand implements ICommand {
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
-        if (request.getSession(false) != null) {
-            request.getSession().invalidate();
-        }
-        return "redirect:/controle?acao=login";
+    public String execute(HttpServletRequest requisicao, HttpServletResponse resposta) {
+        SessaoUsuario.encerrar(requisicao);
+        return Destino.redirecionar("login");
     }
 }

@@ -1,39 +1,27 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Equipamentos - Assistência Técnica M1</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=5">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Equipamentos - Assistência Técnica</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=7">
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="navbar-brand">
-         Assistência Técnica M1
-    </a>
-    <ul class="navbar-nav">
-        <li><a href="${pageContext.request.contextPath}/controle?acao=cliente.listar">Clientes</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar" class="active">Equipamentos</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar">Orçamentos</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar">Ordens & Fichas</a></li>
-    </ul>
-
-    <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
-        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado.nome}</strong> &bull; <span class="badge" style="background: hsl(var(--primary) / 0.15); color: hsl(var(--primary)); font-size: 0.7rem; padding: 0.1rem 0.5rem;">${sessionScope.usuarioLogado.cargo}</span></span>
-        <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
-    </div>
-</nav>
+<jsp:include page="/WEB-INF/views/fragments/navbar.jsp">
+    <jsp:param name="active" value="equipamentos"/>
+</jsp:include>
 
 <div class="container">
 
-    <!-- [RF02] Formulário de Cadastro de Equipamento -->
     <div class="card">
         <h2 class="card-title"> Cadastrar Novo Equipamento</h2>
         <form action="${pageContext.request.contextPath}/controle" method="post">
             <input type="hidden" name="acao" value="equipamento.inserir">
-            <input type="hidden" name="csrfToken" value="${csrfToken}">
+            <input type="hidden" name="csrfToken" value="${fn:escapeXml(csrfToken)}">
 
             <div class="form-grid">
                 <div class="form-group">
@@ -41,8 +29,8 @@
                     <select id="clienteId" name="clienteId" required>
                         <option value="">-- Selecione o Cliente --</option>
                         <c:forEach var="cli" items="${clientes}">
-                            <option value="${cli.id}" ${clienteFiltro != null && clienteFiltro.id == cli.id ? 'selected' : ''}>
-                                ${cli.nome} (CPF: ${cli.cpf})
+                            <option value="${fn:escapeXml(cli.id)}" ${clienteFiltro != null && clienteFiltro.id == cli.id ? 'selected' : ''}>
+                                ${fn:escapeXml(cli.nome)} (CPF: ${fn:escapeXml(cli.cpf)})
                             </option>
                         </c:forEach>
                     </select>
@@ -88,12 +76,11 @@
         </form>
     </div>
 
-    <!-- [RF02] Listagem de Equipamentos -->
     <div class="card">
         <h2 class="card-title">
              Equipamentos Cadastrados
             <c:if test="${clienteFiltro != null}">
-                <span style="font-size: 0.9rem; font-weight: normal;">(Filtrado por Cliente: <strong>${clienteFiltro.nome}</strong>)</span>
+                <span style="font-size: 0.9rem; font-weight: normal;">(Filtrado por Cliente: <strong>${fn:escapeXml(clienteFiltro.nome)}</strong>)</span>
             </c:if>
         </h2>
         <div class="table-responsive">
@@ -111,14 +98,14 @@
                 <tbody>
                 <c:forEach var="equip" items="${equipamentos}">
                     <tr>
-                        <td>${equip.id}</td>
-                        <td><a href="${pageContext.request.contextPath}/controle?acao=cliente.consultar&id=${equip.cliente.id}" class="link-vinculo">${equip.cliente.nome}</a></td>
-                        <td>${equip.tipo}</td>
-                        <td><strong><a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${equip.id}" class="link-vinculo">${equip.marca} ${equip.modelo}</a></strong></td>
-                        <td>${equip.voltagem}</td>
+                        <td>${fn:escapeXml(equip.id)}</td>
+                        <td><a href="${pageContext.request.contextPath}/controle?acao=cliente.consultar&id=${fn:escapeXml(equip.cliente.id)}" class="link-vinculo">${fn:escapeXml(equip.cliente.nome)}</a></td>
+                        <td>${fn:escapeXml(equip.tipo)}</td>
+                        <td><strong><a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${fn:escapeXml(equip.id)}" class="link-vinculo">${fn:escapeXml(equip.marca)} ${fn:escapeXml(equip.modelo)}</a></strong></td>
+                        <td>${fn:escapeXml(equip.voltagem)}</td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${equip.id}" class="btn btn-sm btn-primary"> Detalhes</a>
-                            <a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar&equipamentoId=${equip.id}" class="btn btn-sm btn-secondary"> Orçamentos</a>
+                            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.consultar&id=${fn:escapeXml(equip.id)}" class="btn btn-sm btn-primary"> Detalhes</a>
+                            <a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar&equipamentoId=${fn:escapeXml(equip.id)}" class="btn btn-sm btn-secondary"> Orçamentos</a>
                         </td>
                     </tr>
                 </c:forEach>

@@ -1,16 +1,8 @@
 package com.assistencia.command;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 
-/**
- * [Requisito 8: Padrão Command]
- * Contrato comum para encapsular a execução de ações HTTP.
- */
+/** [Command - Aula 07] Contrato comum das ações da aplicação web. */
 public interface ICommand {
-
-    /**
-     * Executa o comando e retorna o destino (URL de redirecionamento ou caminho da view JSP).
-     */
-    String execute(HttpServletRequest request, HttpServletResponse response) throws Exception;
+    String execute(HttpServletRequest requisicao, HttpServletResponse resposta) throws Exception;
 }

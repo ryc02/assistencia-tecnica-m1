@@ -1,8 +1,3 @@
--- ============================================================================
--- [Requisito: Banco de Dados & Integridade] Schema SQL para a Assistência Técnica
--- Define 5 tabelas com restrições NOT NULL, UNIQUE e Foreign Keys exigidas
--- ============================================================================
-
 CREATE TABLE IF NOT EXISTS usuario (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
@@ -24,7 +19,7 @@ CREATE TABLE IF NOT EXISTS cliente (
     data_cadastro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- [Requisito 6] Associação Cliente (1) -> Equipamento (0..N)
+-- Cliente 1:N Equipamento
 CREATE TABLE IF NOT EXISTS equipamento (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     cliente_id BIGINT NOT NULL,
@@ -39,7 +34,7 @@ CREATE TABLE IF NOT EXISTS equipamento (
     CONSTRAINT fk_equipamento_cliente FOREIGN KEY (cliente_id) REFERENCES cliente(id)
 );
 
--- [Requisito 6] Associação Equipamento (1) -> Orcamento (0..N)
+-- Equipamento 1:N Orçamento
 CREATE TABLE IF NOT EXISTS orcamento (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     equipamento_id BIGINT NOT NULL,
@@ -51,10 +46,14 @@ CREATE TABLE IF NOT EXISTS orcamento (
     valor_total DECIMAL(12,2) NOT NULL DEFAULT 0.00,
     status VARCHAR(20) NOT NULL DEFAULT 'PENDENTE',
     data_criacao TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    adicionais VARCHAR(500),
     CONSTRAINT fk_orcamento_equipamento FOREIGN KEY (equipamento_id) REFERENCES equipamento(id)
 );
 
--- [Requisito 6] Associação Orcamento (1) -> OrdemServico (0..1) (orcamento_id UNIQUE e NOT NULL)
+-- Bancos da M1: adiciona a coluna dos adicionais (Decorator)
+ALTER TABLE orcamento ADD COLUMN IF NOT EXISTS adicionais VARCHAR(500);
+
+-- Orçamento 1:1 Ordem de Serviço
 CREATE TABLE IF NOT EXISTS ordem_servico (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     orcamento_id BIGINT NOT NULL UNIQUE,
@@ -69,7 +68,7 @@ CREATE TABLE IF NOT EXISTS ordem_servico (
     CONSTRAINT fk_ordem_orcamento FOREIGN KEY (orcamento_id) REFERENCES orcamento(id)
 );
 
--- [Requisito 6 / 1:1] Associação OrdemServico (1) <-> FichaTecnica (1) (ordem_servico_id UNIQUE e NOT NULL)
+-- Ordem de Serviço 1:1 Ficha Técnica
 CREATE TABLE IF NOT EXISTS ficha_tecnica (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     ordem_servico_id BIGINT NOT NULL UNIQUE,
@@ -83,3 +82,7 @@ CREATE TABLE IF NOT EXISTS ficha_tecnica (
     data_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_ficha_ordem FOREIGN KEY (ordem_servico_id) REFERENCES ordem_servico(id) ON DELETE CASCADE
 );
+
+-- Bancos da M1: troca as senhas iniciais em texto puro pelo hash PBKDF2
+UPDATE usuario SET senha = '$pbkdf2$10000$w8s5xuIiGtrngOetQAKWiw==$OJOPBoeqLVUvpAFYRwnT8H8vWGqqJZ3fdt3BQmrAtFk=' WHERE email = 'admin@m1.com' AND senha = 'admin123';
+UPDATE usuario SET senha = '$pbkdf2$10000$7tFc/Xi1m+f5O5hvNNSUzQ==$80QeXUuSU2NmQJWDn//1dzP8rFnqwAmcG1yQwzu4z7M=' WHERE email = 'tecnico@m1.com' AND senha = '123456';

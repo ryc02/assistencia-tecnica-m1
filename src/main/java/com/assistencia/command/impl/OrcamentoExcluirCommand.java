@@ -1,23 +1,21 @@
 package com.assistencia.command.impl;
 
-import com.assistencia.command.ICommand;
-import com.assistencia.service.OrcamentoService;
+import com.assistencia.command.*;
+import com.assistencia.service.GestaoOrcamentoService;
+import javax.servlet.http.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-/**
- * [Requisito 8: Padrão Command & RF03]
- * Comando para excluir orçamento.
- */
+/** [Command - Aula 07] Exclui um orçamento sem ordem de serviço. */
 public class OrcamentoExcluirCommand implements ICommand {
+    private final GestaoOrcamentoService servico;
 
-    private final OrcamentoService orcamentoService = new OrcamentoService();
+    public OrcamentoExcluirCommand(GestaoOrcamentoService servico) {
+        this.servico = servico;
+    }
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Long id = Long.parseLong(request.getParameter("id"));
-        orcamentoService.excluir(id);
-        return "redirect:/controle?acao=orcamento.listar";
+    public String execute(HttpServletRequest requisicao, HttpServletResponse resposta) throws Exception {
+        Long id = ParametrosHttp.idObrigatorio(requisicao, "id", "orçamento");
+        servico.excluir(id);
+        return Destino.redirecionar("orcamento.listar");
     }
 }

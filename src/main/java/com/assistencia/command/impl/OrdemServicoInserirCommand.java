@@ -1,20 +1,18 @@
 package com.assistencia.command.impl;
 
 import com.assistencia.command.ICommand;
+import javax.servlet.http.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-/**
- * [Requisito 4: Semântica do CRUD / Seção 10]
- * O formulário "Inserir Ordem" chama o mesmo serviço de aprovação automática do orçamento.
- */
+/** [Command - Aula 07] Inserir ordem = aprovar o orçamento (a ordem só nasce da aprovação). */
 public class OrdemServicoInserirCommand implements ICommand {
+    private final ICommand aprovar;
 
-    private final OrcamentoAprovarCommand aprovarCommand = new OrcamentoAprovarCommand();
+    public OrdemServicoInserirCommand(ICommand aprovar) {
+        this.aprovar = aprovar;
+    }
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        return aprovarCommand.execute(request, response);
+    public String execute(HttpServletRequest requisicao, HttpServletResponse resposta) throws Exception {
+        return aprovar.execute(requisicao, resposta);
     }
 }

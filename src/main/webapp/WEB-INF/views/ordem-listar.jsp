@@ -1,30 +1,19 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Ordens de Serviço & Fichas - Assistência Técnica M1</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=5">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ordens de Serviço & Fichas - Assistência Técnica</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=7">
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="navbar-brand">
-         Assistência Técnica M1
-    </a>
-    <ul class="navbar-nav">
-        <li><a href="${pageContext.request.contextPath}/controle?acao=cliente.listar">Clientes</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar">Equipamentos</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar">Orçamentos</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar" class="active">Ordens & Fichas</a></li>
-    </ul>
-
-    <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
-        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado.nome}</strong> &bull; <span class="badge" style="background: hsl(var(--primary) / 0.15); color: hsl(var(--primary)); font-size: 0.7rem; padding: 0.1rem 0.5rem;">${sessionScope.usuarioLogado.cargo}</span></span>
-        <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
-    </div>
-</nav>
+<jsp:include page="/WEB-INF/views/fragments/navbar.jsp">
+    <jsp:param name="active" value="ordens"/>
+</jsp:include>
 
 <div class="container">
 
@@ -32,7 +21,7 @@
         <h2 class="card-title">
              Ordens de Serviço Cadastradas
             <c:if test="${orcamentoFiltro != null}">
-                <span style="font-size: 0.9rem; font-weight: normal;">(Filtrado por Orçamento #${orcamentoFiltro.id})</span>
+                <span style="font-size: 0.9rem; font-weight: normal;">(Filtrado por Orçamento #${fn:escapeXml(orcamentoFiltro.id)})</span>
             </c:if>
         </h2>
 
@@ -51,18 +40,18 @@
                 <tbody>
                 <c:forEach var="os" items="${ordens}">
                     <tr>
-                        <td><strong>#${os.id}</strong></td>
+                        <td><strong>#${fn:escapeXml(os.id)}</strong></td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/controle?acao=orcamento.consultar&id=${os.orcamento.id}" class="link-vinculo">
-                                Orçamento #${os.orcamento.id} (R$ ${os.orcamento.valorTotal})
+                            <a href="${pageContext.request.contextPath}/controle?acao=orcamento.consultar&id=${fn:escapeXml(os.orcamento.id)}" class="link-vinculo">
+                                Orçamento #${fn:escapeXml(os.orcamento.id)} (R$ ${fn:escapeXml(os.orcamento.valorTotal)})
                             </a>
-                            <br><small style="color: var(--text-muted);">${os.orcamento.equipamento.tipo} ${os.orcamento.equipamento.modelo}</small>
+                            <br><small style="color: var(--text-muted);">${fn:escapeXml(os.orcamento.equipamento.tipo)} ${fn:escapeXml(os.orcamento.equipamento.modelo)}</small>
                         </td>
-                        <td>${os.responsavel}</td>
-                        <td><span class="badge" style="background: #f1f5f9; color: #334155;">${os.prioridade}</span></td>
-                        <td><span class="badge badge-${os.status.name().toLowerCase()}">${os.status}</span></td>
+                        <td>${fn:escapeXml(os.responsavel)}</td>
+                        <td><span class="badge" style="background: #f1f5f9; color: #334155;">${fn:escapeXml(os.prioridade)}</span></td>
+                        <td><span class="badge badge-${os.status.name().toLowerCase()}">${fn:escapeXml(os.status)}</span></td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/controle?acao=ordemServico.consultar&id=${os.id}" class="btn btn-sm btn-primary"> Ordem & Ficha Juntas</a>
+                            <a href="${pageContext.request.contextPath}/controle?acao=ordemServico.consultar&id=${fn:escapeXml(os.id)}" class="btn btn-sm btn-primary"> Ordem & Ficha Juntas</a>
                         </td>
                     </tr>
                 </c:forEach>

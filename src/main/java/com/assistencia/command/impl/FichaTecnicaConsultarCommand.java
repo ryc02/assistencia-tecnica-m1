@@ -1,29 +1,26 @@
 package com.assistencia.command.impl;
 
-import com.assistencia.command.ICommand;
-import com.assistencia.model.FichaTecnica;
-import com.assistencia.service.FichaTecnicaService;
+import com.assistencia.command.*;
+import com.assistencia.model.ficha.FichaTecnica;
+import com.assistencia.service.ConsultaAtendimento;
+import javax.servlet.http.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-/**
- * [Requisito 8: Padrão Command & RF07]
- * Comando para consultar detalhes de uma Ficha Técnica.
- */
+/** [Command - Aula 07] Redireciona para o atendimento (ordem + ficha) da ficha informada. */
 public class FichaTecnicaConsultarCommand implements ICommand {
+    private final ConsultaAtendimento consulta;
 
-    private final FichaTecnicaService fichaTecnicaService = new FichaTecnicaService();
+    public FichaTecnicaConsultarCommand(ConsultaAtendimento consulta) {
+        this.consulta = consulta;
+    }
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String idStr = request.getParameter("id");
-        if (idStr == null || idStr.trim().isEmpty()) {
-            return "redirect:/controle?acao=ordemServico.listar";
+    public String execute(HttpServletRequest requisicao, HttpServletResponse resposta) throws Exception {
+        Long id = ParametrosHttp.id(requisicao, "id");
+        if (id == null) {
+            return Destino.redirecionar("ordemServico.listar");
         }
-        Long id = Long.parseLong(idStr);
-        FichaTecnica ft = fichaTecnicaService.buscarPorId(id);
-        request.setAttribute("fichaTecnica", ft);
-        return "redirect:/controle?acao=ordemServico.consultar&id=" + ft.getOrdemServico().getId();
+        FichaTecnica ficha = consulta.ficha(id);
+        Long ordemId = IdDaOrdem.de(ficha);
+        return Destino.redirecionar("ordemServico.consultar", ordemId);
     }
 }

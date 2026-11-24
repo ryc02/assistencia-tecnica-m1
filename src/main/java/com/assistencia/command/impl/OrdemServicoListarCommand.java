@@ -1,38 +1,31 @@
 package com.assistencia.command.impl;
 
-import com.assistencia.command.ICommand;
-import com.assistencia.model.OrdemServico;
-import com.assistencia.service.OrcamentoService;
-import com.assistencia.service.OrdemServicoService;
+import com.assistencia.command.*;
+import com.assistencia.model.orcamento.Orcamento;
+import com.assistencia.service.*;
+import java.util.Map;
+import javax.servlet.http.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-/**
- * [Requisito 8: Padrão Command & Requisito 10: Filtro orcamentoId]
- * Comando para listar ordens de serviço, com filtro opcional por orcamentoId.
- */
+/** [Command - Aula 07] Lista as ordens de serviço (todas ou a de um orçamento). */
 public class OrdemServicoListarCommand implements ICommand {
+    private final TelasDeAtendimento telas;
+    private final ConsultaOrcamento orcamentos;
 
-    private final OrdemServicoService ordemServicoService = new OrdemServicoService();
-    private final OrcamentoService orcamentoService = new OrcamentoService();
+    public OrdemServicoListarCommand(TelasDeAtendimento telas, ConsultaOrcamento orcamentos) {
+        this.telas = telas;
+        this.orcamentos = orcamentos;
+    }
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String orcIdStr = request.getParameter("orcamentoId");
-        if (orcIdStr != null && !orcIdStr.trim().isEmpty()) {
-            Long orcId = Long.parseLong(orcIdStr);
-            // buscarPorOrcamentoId retorna um objeto singular; converter para lista para a JSP
-            OrdemServico os = ordemServicoService.buscarPorOrcamentoId(orcId);
-            List<OrdemServico> lista = (os != null) ? Collections.singletonList(os) : new ArrayList<>();
-            request.setAttribute("ordens", lista);
-            request.setAttribute("orcamentoFiltro", orcamentoService.buscarPorId(orcId));
-        } else {
-            request.setAttribute("ordens", ordemServicoService.listarTodas());
+    public String execute(HttpServletRequest requisicao, HttpServletResponse resposta) throws Exception {
+        Long orcamentoId = ParametrosHttp.id(requisicao, "orcamentoId");
+        Tela tela = telas.listagem(orcamentoId);
+        tela.publicar(requisicao::setAttribute);
+        if (orcamentoId != null) {
+            Orcamento filtro = orcamentos.buscarPorId(orcamentoId);
+            Map<String, Object> visao = Visao.de(filtro);
+            requisicao.setAttribute("orcamentoFiltro", visao);
         }
-        return "/WEB-INF/views/ordem-listar.jsp";
+        return Destino.view("ordem-listar");
     }
 }

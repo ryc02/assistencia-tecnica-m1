@@ -1,91 +1,23 @@
 package com.assistencia.factory;
 
 import com.assistencia.command.ICommand;
-import com.assistencia.command.impl.*;
 
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * [Requisito 8: Fábrica Simples (CommandFactory)]
- * Centraliza o registro e a instanciação dos comandos conforme a ação informada.
- * Classificada como fábrica simples conforme a abordagem didática da aula.
- */
-public class CommandFactory {
-
-    private static final Map<String, ICommand> comandos = new HashMap<>();
+/** [Factory Method + Command - Aula 07] Entrega o Command correspondente à ação pedida. */
+public final class CommandFactory {
+    private static final RegistroDeComandos REGISTRO = new RegistroDeComandos();
 
     static {
-        // Cliente
-        comandos.put("cliente.listar", new ClienteListarCommand());
-        comandos.put("cliente.consultar", new ClienteConsultarCommand());
-        comandos.put("cliente.inserir", new ClienteInserirCommand());
-        comandos.put("cliente.atualizar", new ClienteAtualizarCommand());
-        comandos.put("cliente.excluir", new ClienteExcluirCommand());
-
-        // Equipamento
-        comandos.put("equipamento.listar", new EquipamentoListarCommand());
-        comandos.put("equipamento.consultar", new EquipamentoConsultarCommand());
-        comandos.put("equipamento.inserir", new EquipamentoInserirCommand());
-        comandos.put("equipamento.atualizar", new EquipamentoAtualizarCommand());
-        comandos.put("equipamento.excluir", new EquipamentoExcluirCommand());
-
-        // Orçamento
-        comandos.put("orcamento.listar", new OrcamentoListarCommand());
-        comandos.put("orcamento.consultar", new OrcamentoConsultarCommand());
-        comandos.put("orcamento.inserir", new OrcamentoInserirCommand());
-        comandos.put("orcamento.atualizar", new OrcamentoAtualizarCommand());
-        comandos.put("orcamento.excluir", new OrcamentoExcluirCommand());
-        comandos.put("orcamento.aprovar", new OrcamentoAprovarCommand());
-        comandos.put("orcamento.recusar", new OrcamentoRecusarCommand());
-
-        // Ordem de Serviço
-        comandos.put("ordemServico.listar", new OrdemServicoListarCommand());
-        comandos.put("ordemServico.consultar", new OrdemServicoConsultarCommand());
-        comandos.put("ordemServico.inserir", new OrdemServicoInserirCommand());
-        comandos.put("ordemServico.atualizar", new OrdemServicoAtualizarCommand());
-        comandos.put("ordemServico.excluir", new OrdemServicoExcluirCommand());
-        comandos.put("ordemServico.iniciar", new OrdemServicoIniciarCommand());
-        comandos.put("ordemServico.concluir", new OrdemServicoConcluirCommand());
-        comandos.put("ordemServico.cancelar", new OrdemServicoCancelarCommand());
-
-        // Ficha Técnica
-        comandos.put("fichaTecnica.listar", new FichaTecnicaListarCommand());
-        comandos.put("fichaTecnica.consultar", new FichaTecnicaConsultarCommand());
-        comandos.put("fichaTecnica.atualizar", new FichaTecnicaAtualizarCommand());
-
-        // Autenticação
-        comandos.put("login", new LoginCommand());
-        comandos.put("efetuarLogin", new EfetuarLoginCommand());
-        comandos.put("logout", new LogoutCommand());
-
-        // Usuário
-        comandos.put("usuario.listar", new UsuarioListarCommand());
-        comandos.put("usuario.inserir", new UsuarioInserirCommand());
-        comandos.put("usuario.excluir", new UsuarioExcluirCommand());
-
-        // Segurança
-        comandos.put("acesso.negado", new AcessoNegadoCommand());
-
+        ComandosDeCliente.registrar(REGISTRO);
+        ComandosDeEquipamento.registrar(REGISTRO);
+        ComandosDeOrcamento.registrar(REGISTRO);
+        ComandosDeAtendimento.registrar(REGISTRO);
+        ComandosDeAcesso.registrar(REGISTRO);
     }
 
-    /**
-     * Retorna o comando correspondente à ação solicitada ou null se desconhecida.
-     */
-    public static ICommand createCommand(String acao) {
-        if (acao == null) return null;
-        return comandos.get(acao);
-    }
+    private CommandFactory() { }
 
-    /**
-     * [Requisito 10 & 11] Verifica se a ação é de alteração de estado (exige HTTP POST).
-     */
-    public static boolean isPostAction(String acao) {
-        if (acao == null) return false;
-        if (acao.equals("usuario.inserir")) return false; // Exceção: permite GET para renderizar o formulário vazio
-        return acao.endsWith(".inserir") || acao.endsWith(".atualizar") || acao.endsWith(".excluir")
-                || acao.endsWith(".aprovar") || acao.endsWith(".recusar")
-                || acao.endsWith(".iniciar") || acao.endsWith(".concluir") || acao.endsWith(".cancelar")
-                || acao.equals("efetuarLogin");
+    /** Devolve o Command da ação ou null quando a ação não existe. */
+    public static ICommand criar(String acao) {
+        return REGISTRO.comando(acao);
     }
 }

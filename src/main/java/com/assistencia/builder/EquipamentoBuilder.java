@@ -1,107 +1,43 @@
 package com.assistencia.builder;
 
-import com.assistencia.exception.ValidationException;
-import com.assistencia.model.Cliente;
-import com.assistencia.model.Equipamento;
-
+import com.assistencia.dados.Campos;
+import com.assistencia.model.cliente.Cliente;
+import com.assistencia.model.equipamento.Equipamento;
 import java.time.LocalDateTime;
 
-/**
- * [Requisito 8: Padrão Builder]
- * EquipamentoBuilder: Constrói objetos Equipamento validando voltagem e cliente.
- */
-public class EquipamentoBuilder {
-
-    private Long id;
-    private Cliente cliente;
-    private String tipo;
-    private String marca;
-    private String modelo;
-    private String numeroSerie;
-    private String cor;
-    private String voltagem;
-    private String descricao;
-    private LocalDateTime dataCadastro;
-
-    public EquipamentoBuilder id(Long id) {
-        this.id = id;
-        return this;
-    }
-
+/** [Builder - Aula 06] Constrói Equipamento vinculado a um Cliente, validando voltagem e campos obrigatórios. */
+public class EquipamentoBuilder extends BuilderDeEntidade<EquipamentoBuilder, Equipamento> {
     public EquipamentoBuilder cliente(Cliente cliente) {
-        this.cliente = cliente;
-        return this;
-    }
-
-    public EquipamentoBuilder tipo(String tipo) {
-        this.tipo = tipo;
-        return this;
-    }
-
-    public EquipamentoBuilder marca(String marca) {
-        this.marca = marca;
-        return this;
-    }
-
-    public EquipamentoBuilder modelo(String modelo) {
-        this.modelo = modelo;
-        return this;
-    }
-
-    public EquipamentoBuilder numeroSerie(String numeroSerie) {
-        this.numeroSerie = numeroSerie;
-        return this;
-    }
-
-    public EquipamentoBuilder cor(String cor) {
-        this.cor = cor;
-        return this;
-    }
-
-    public EquipamentoBuilder voltagem(String voltagem) {
-        this.voltagem = voltagem;
-        return this;
-    }
-
-    public EquipamentoBuilder descricao(String descricao) {
-        this.descricao = descricao;
-        return this;
+        return com("cliente", cliente);
     }
 
     public EquipamentoBuilder dataCadastro(LocalDateTime dataCadastro) {
-        this.dataCadastro = dataCadastro;
+        return com("dataCadastro", dataCadastro);
+    }
+
+    public EquipamentoBuilder tipo(String tipo) {
+        return com("tipo", tipo);
+    }
+
+    public EquipamentoBuilder marca(String marca) {
+        return com("marca", marca);
+    }
+
+    public EquipamentoBuilder modelo(String modelo) {
+        return com("modelo", modelo);
+    }
+
+    public EquipamentoBuilder voltagem(String voltagem) {
+        return com("voltagem", voltagem);
+    }
+
+    @Override
+    protected EquipamentoBuilder proprio() {
         return this;
     }
 
-    public Equipamento build() {
-        if (cliente == null) {
-            throw new ValidationException("Cliente é obrigatório para cadastrar um equipamento.");
-        }
-        if (tipo == null || tipo.trim().isEmpty() ||
-            marca == null || marca.trim().isEmpty() ||
-            modelo == null || modelo.trim().isEmpty()) {
-            throw new ValidationException("Tipo, marca e modelo são obrigatórios.");
-        }
-        if (voltagem == null || voltagem.trim().isEmpty()) {
-            throw new ValidationException("Voltagem é obrigatória.");
-        }
-        String v = voltagem.trim().toUpperCase();
-        if (!v.equals("110V") && !v.equals("127V") && !v.equals("220V") && !v.equals("BIVOLT") && !v.equals("NAO_APLICAVEL")) {
-            throw new ValidationException("Voltagem inválida. Valores permitidos: 110V, 127V, 220V, BIVOLT ou NAO_APLICAVEL.");
-        }
-
-        Equipamento eq = new Equipamento();
-        eq.setId(id);
-        eq.setCliente(cliente);
-        eq.setTipo(tipo.trim());
-        eq.setMarca(marca.trim());
-        eq.setModelo(modelo.trim());
-        eq.setNumeroSerie(numeroSerie != null ? numeroSerie.trim() : null);
-        eq.setCor(cor != null ? cor.trim() : null);
-        eq.setVoltagem(v);
-        eq.setDescricao(descricao != null ? descricao.trim() : null);
-        eq.setDataCadastro(dataCadastro != null ? dataCadastro : LocalDateTime.now());
-
-        return eq;
+    @Override
+    protected Equipamento construir(Campos campos) {
+        return Equipamento.de(campos);
     }
 }

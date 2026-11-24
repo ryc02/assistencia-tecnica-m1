@@ -1,40 +1,29 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Ficha Técnica #${fichaTecnica.id} - Assistência Técnica M1</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=5">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ficha Técnica #${fn:escapeXml(fichaTecnica.id)} - Assistência Técnica</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=7">
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="navbar-brand">
-         Assistência Técnica M1
-    </a>
-    <ul class="navbar-nav">
-        <li><a href="${pageContext.request.contextPath}/controle?acao=cliente.listar">Clientes</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar">Equipamentos</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar">Orçamentos</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar" class="active">Ordens & Fichas</a></li>
-    </ul>
-
-    <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
-        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado.nome}</strong> &bull; <span class="badge" style="background: hsl(var(--primary) / 0.15); color: hsl(var(--primary)); font-size: 0.7rem; padding: 0.1rem 0.5rem;">${sessionScope.usuarioLogado.cargo}</span></span>
-        <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
-    </div>
-</nav>
+<jsp:include page="/WEB-INF/views/fragments/navbar.jsp">
+    <jsp:param name="active" value="ordens"/>
+</jsp:include>
 
 <div class="container">
 
     <div class="card">
-        <h2 class="card-title"> Detalhes da Ficha Técnica #${fichaTecnica.id}</h2>
+        <h2 class="card-title"> Detalhes da Ficha Técnica #${fn:escapeXml(fichaTecnica.id)}</h2>
 
         <form action="${pageContext.request.contextPath}/controle" method="post">
             <input type="hidden" name="acao" value="fichaTecnica.atualizar">
-            <input type="hidden" name="id" value="${fichaTecnica.id}">
-            <input type="hidden" name="csrfToken" value="${csrfToken}">
+            <input type="hidden" name="id" value="${fn:escapeXml(fichaTecnica.id)}">
+            <input type="hidden" name="csrfToken" value="${fn:escapeXml(csrfToken)}">
 
             <div class="form-grid">
                 <div class="form-group">
@@ -48,7 +37,7 @@
                 </div>
                 <div class="form-group">
                     <label for="acessoriosEntregues">Acessórios Entregues</label>
-                    <input type="text" id="acessoriosEntregues" name="acessoriosEntregues" value="${fichaTecnica.acessoriosEntregues}" maxlength="500">
+                    <input type="text" id="acessoriosEntregues" name="acessoriosEntregues" value="${fn:escapeXml(fichaTecnica.acessoriosEntregues)}" maxlength="500">
                 </div>
                 <div class="form-group">
                     <label for="ligaNormalmente">Liga Normalmente?</label>
@@ -68,15 +57,15 @@
                 </div>
                 <div class="form-group full-width">
                     <label for="descricaoAvarias">Descrição das Avarias (se houver)</label>
-                    <textarea id="descricaoAvarias" name="descricaoAvarias" rows="2" maxlength="1000">${fichaTecnica.descricaoAvarias}</textarea>
+                    <textarea id="descricaoAvarias" name="descricaoAvarias" rows="2" maxlength="1000">${fn:escapeXml(fichaTecnica.descricaoAvarias)}</textarea>
                 </div>
                 <div class="form-group full-width">
                     <label for="testeInicial">Teste Inicial</label>
-                    <textarea id="testeInicial" name="testeInicial" rows="2" maxlength="2000">${fichaTecnica.testeInicial}</textarea>
+                    <textarea id="testeInicial" name="testeInicial" rows="2" maxlength="2000">${fn:escapeXml(fichaTecnica.testeInicial)}</textarea>
                 </div>
                 <div class="form-group full-width">
                     <label for="laudoTecnicoFinal">Laudo Técnico Final (Obrigatório para Concluir OS)</label>
-                    <textarea id="laudoTecnicoFinal" name="laudoTecnicoFinal" rows="3" maxlength="4000">${fichaTecnica.laudoTecnicoFinal}</textarea>
+                    <textarea id="laudoTecnicoFinal" name="laudoTecnicoFinal" rows="3" maxlength="4000">${fn:escapeXml(fichaTecnica.laudoTecnicoFinal)}</textarea>
                 </div>
             </div>
 

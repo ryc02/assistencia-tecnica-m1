@@ -1,11 +1,18 @@
 package com.assistencia.dao;
 
-import com.assistencia.model.Usuario;
+import com.assistencia.dados.Registros;
+import com.assistencia.model.usuario.Usuario;
 import java.sql.Connection;
-import java.util.List;
+
+/** [DAO - Aula 04] Contrato de persistência do Usuário. */
 public interface UsuarioDAO {
-    Usuario buscarPorEmailSenha(Connection conn, String email, String senha) throws Exception;
-    List<Usuario> listarTodos(Connection conn) throws Exception;
-    void inserir(Connection conn, Usuario usuario) throws Exception;
-    void excluir(Connection conn, Long id) throws Exception;
+    Usuario buscarPorEmail(Connection conexao, String email) throws Exception;
+
+    Usuario buscarPorId(Connection conexao, Long id) throws Exception;
+
+    Registros<Usuario> listarTodos(Connection conexao) throws Exception;
+
+    void inserir(Connection conexao, Usuario usuario) throws Exception;
+
+    void excluir(Connection conexao, Long id) throws Exception;
 }

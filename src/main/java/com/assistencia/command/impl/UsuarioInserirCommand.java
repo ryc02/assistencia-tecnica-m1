@@ -1,35 +1,29 @@
 package com.assistencia.command.impl;
 
-import com.assistencia.command.ICommand;
+import com.assistencia.command.*;
+import com.assistencia.dados.Campos;
+import com.assistencia.exception.*;
 import com.assistencia.service.UsuarioService;
-import com.assistencia.model.Usuario;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 
+/** [Command - Aula 07] Cadastra um usuário (senha gravada com hash). */
 public class UsuarioInserirCommand implements ICommand {
-    private final UsuarioService usuarioService = new UsuarioService();
+    private final UsuarioService servico;
+
+    public UsuarioInserirCommand(UsuarioService servico) {
+        this.servico = servico;
+    }
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
-        // Se for GET, apenas abre a tela vazia
-        if ("GET".equalsIgnoreCase(request.getMethod())) {
-            return "/WEB-INF/views/usuario-detalhes.jsp";
-        }
-        
-        // Se for POST, processa a inclusao
+    public String execute(HttpServletRequest requisicao, HttpServletResponse resposta) throws Exception {
         try {
-            Usuario usuario = new Usuario();
-            usuario.setNome(request.getParameter("nome"));
-            usuario.setEmail(request.getParameter("email"));
-            usuario.setSenha(request.getParameter("senha"));
-            usuario.setCargo(request.getParameter("cargo"));
-
-            usuarioService.inserir(usuario);
-            return "redirect:/controle?acao=usuario.listar";
-            
-        } catch (Exception e) {
-            request.setAttribute("erro", "Erro ao cadastrar usuário: " + e.getMessage());
-            return "/WEB-INF/views/usuario-detalhes.jsp";
+            Campos dados = ParametrosHttp.campos(requisicao);
+            servico.inserir(dados);
+            return Destino.redirecionar("usuario.listar");
+        } catch (ValidationException | ConflictException excecao) {
+            String mensagem = excecao.getMessage();
+            requisicao.setAttribute("erro", "Erro ao cadastrar usuário: " + mensagem);
+            return Destino.view("usuario-detalhes");
         }
     }
 }

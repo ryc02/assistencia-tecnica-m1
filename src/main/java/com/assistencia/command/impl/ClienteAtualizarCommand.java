@@ -1,32 +1,23 @@
 package com.assistencia.command.impl;
 
-import com.assistencia.command.ICommand;
+import com.assistencia.command.*;
+import com.assistencia.dados.Campos;
 import com.assistencia.service.ClienteService;
+import javax.servlet.http.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-/**
- * [Requisito 8: Padrão Command & Requisito 10: HTTP 303 Redirect]
- * Comando para atualizar dados de um cliente existente.
- */
+/** [Command - Aula 07] Atualiza os dados de um cliente. */
 public class ClienteAtualizarCommand implements ICommand {
+    private final ClienteService servico;
 
-    private final ClienteService clienteService = new ClienteService();
+    public ClienteAtualizarCommand(ClienteService servico) {
+        this.servico = servico;
+    }
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Long id = Long.parseLong(request.getParameter("id"));
-        String nome = request.getParameter("nome");
-        String cpf = request.getParameter("cpf");
-        String email = request.getParameter("email");
-        String telefone = request.getParameter("telefone");
-        String logradouro = request.getParameter("logradouro");
-        String numero = request.getParameter("numero");
-        String bairro = request.getParameter("bairro");
-        String cidade = request.getParameter("cidade");
-
-        clienteService.atualizar(id, nome, cpf, email, telefone, logradouro, numero, bairro, cidade);
-        return "redirect:/controle?acao=cliente.consultar&id=" + id;
+    public String execute(HttpServletRequest requisicao, HttpServletResponse resposta) throws Exception {
+        Long id = ParametrosHttp.idObrigatorio(requisicao, "id", "cliente");
+        Campos dados = ParametrosHttp.campos(requisicao);
+        servico.atualizar(id, dados);
+        return Destino.redirecionar("cliente.consultar", id);
     }
 }

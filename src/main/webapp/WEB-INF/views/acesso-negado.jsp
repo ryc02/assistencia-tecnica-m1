@@ -1,12 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Acesso Negado - Assistência Técnica M1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Acesso Negado - Assistência Técnica</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=6">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=7">
     <style>
         body {
             display: flex;
@@ -68,7 +70,7 @@
         Esta ação é restrita ao perfil <strong>Administrador</strong>.
     </p>
     <div class="badge-cargo">
-        Seu perfil: ${sessionScope.usuarioLogado.cargo}
+        Seu perfil: ${fn:escapeXml(sessionScope.usuarioLogado.cargo)}
     </div>
     <br>
     <a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar" class="btn btn-primary">

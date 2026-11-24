@@ -1,22 +1,25 @@
 package com.assistencia.command.impl;
 
-import com.assistencia.command.ICommand;
-import com.assistencia.service.ClienteService;
+import com.assistencia.command.*;
+import com.assistencia.dados.Registros;
+import com.assistencia.model.cliente.Cliente;
+import com.assistencia.service.ConsultaCliente;
+import java.util.*;
+import javax.servlet.http.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-/**
- * [Requisito 8: Padrão Command & Requisito 10: Contrato HTTP]
- * Comando para listar clientes.
- */
+/** [Command - Aula 07] Lista os clientes. */
 public class ClienteListarCommand implements ICommand {
+    private final ConsultaCliente consulta;
 
-    private final ClienteService clienteService = new ClienteService();
+    public ClienteListarCommand(ConsultaCliente consulta) {
+        this.consulta = consulta;
+    }
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        request.setAttribute("clientes", clienteService.listarTodos());
-        return "/WEB-INF/views/cliente-listar.jsp";
+    public String execute(HttpServletRequest requisicao, HttpServletResponse resposta) throws Exception {
+        Registros<Cliente> clientes = consulta.listarTodos();
+        List<Map<String, Object>> visao = clientes.exportar();
+        requisicao.setAttribute("clientes", visao);
+        return Destino.view("cliente-listar");
     }
 }

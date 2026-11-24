@@ -1,10 +1,8 @@
 package com.assistencia.exception;
 
-/**
- * [Requisito 10: Trata HTTP 404] Exceção lançada quando o registro consultado não existe.
- */
+/** Registro não encontrado (HTTP 404). */
 public class NotFoundException extends RuntimeException {
-    public NotFoundException(String message) {
-        super(message);
+    public NotFoundException(String mensagem) {
+        super(mensagem);
     }
 }

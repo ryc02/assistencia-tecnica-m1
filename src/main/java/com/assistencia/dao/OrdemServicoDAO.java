@@ -1,21 +1,22 @@
 package com.assistencia.dao;
 
-import com.assistencia.model.OrdemServico;
-
+import com.assistencia.dados.Registros;
+import com.assistencia.model.ordem.OrdemServico;
 import java.sql.Connection;
-import java.util.List;
 
-/**
- * [Requisito 8: Padrão DAO]
- * Contrato de persistência para a entidade OrdemServico.
- */
+/** [DAO - Aula 04] Contrato de persistência da Ordem de Serviço. */
 public interface OrdemServicoDAO {
-    OrdemServico inserir(Connection conn, OrdemServico ordemServico) throws Exception;
-    void atualizar(Connection conn, OrdemServico ordemServico) throws Exception;
-    void excluir(Connection conn, Long id) throws Exception;
-    OrdemServico buscarPorId(Connection conn, Long id) throws Exception;
-    OrdemServico buscarPorOrcamentoId(Connection conn, Long orcamentoId) throws Exception;
-    OrdemServico buscarPorIdParaUpdate(Connection conn, Long id) throws Exception;
-    List<OrdemServico> listarTodas(Connection conn) throws Exception;
-    List<OrdemServico> listarPorOrcamento(Connection conn, Long orcamentoId) throws Exception;
+    OrdemServico inserir(Connection conexao, OrdemServico ordemServico) throws Exception;
+
+    void atualizar(Connection conexao, OrdemServico ordemServico) throws Exception;
+
+    void excluir(Connection conexao, Long id) throws Exception;
+
+    OrdemServico buscarPorId(Connection conexao, Long id) throws Exception;
+
+    OrdemServico buscarPorIdParaUpdate(Connection conexao, Long id) throws Exception;
+
+    OrdemServico buscarPorOrcamentoId(Connection conexao, Long orcamentoId) throws Exception;
+
+    Registros<OrdemServico> listarTodas(Connection conexao) throws Exception;
 }

@@ -1,40 +1,27 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Clientes - Assistência Técnica M1</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=5">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Clientes - Assistência Técnica</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=7">
 </head>
 <body>
 
-<nav class="navbar">
-    <a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="navbar-brand">
-         Assistência Técnica M1
-    </a>
-    <ul class="navbar-nav">
-        <li><a href="${pageContext.request.contextPath}/controle?acao=cliente.listar" class="active">Clientes</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar">Equipamentos</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=orcamento.listar">Orçamentos</a></li>
-        <li><a href="${pageContext.request.contextPath}/controle?acao=ordemServico.listar">Ordens & Fichas</a></li>
-        <c:if test="${sessionScope.usuarioLogado.cargo == 'Administrador'}"><li><a href="${pageContext.request.contextPath}/controle?acao=usuario.listar">Usuários</a></li></c:if>
-    </ul>
-
-    <div class="user-actions" style="display: flex; align-items: center; gap: 1rem; font-size: 0.875rem;">
-        <span style="color: var(--muted-foreground);">Olá, <strong>${sessionScope.usuarioLogado.nome}</strong> &bull; <span class="badge" style="background: hsl(var(--primary) / 0.15); color: hsl(var(--primary)); font-size: 0.7rem; padding: 0.1rem 0.5rem;">${sessionScope.usuarioLogado.cargo}</span></span>
-        <a href="${pageContext.request.contextPath}/controle?acao=logout" style="color: hsl(0 84.2% 60.2%); text-decoration: none; font-weight: 500;">Sair</a>
-    </div>
-</nav>
+<jsp:include page="/WEB-INF/views/fragments/navbar.jsp">
+    <jsp:param name="active" value="clientes"/>
+</jsp:include>
 
 <div class="container">
 
-    <!-- [RF01] Formulário de Cadastro de Cliente -->
     <div class="card">
         <h2 class="card-title"> Cadastrar Novo Cliente</h2>
         <form action="${pageContext.request.contextPath}/controle" method="post">
             <input type="hidden" name="acao" value="cliente.inserir">
-            <input type="hidden" name="csrfToken" value="${csrfToken}">
+            <input type="hidden" name="csrfToken" value="${fn:escapeXml(csrfToken)}">
 
             <div class="form-grid">
                 <div class="form-group">
@@ -76,7 +63,6 @@
         </form>
     </div>
 
-    <!-- [RF01] Listagem de Clientes -->
     <div class="card">
         <h2 class="card-title"> Clientes Cadastrados</h2>
         <div class="table-responsive">
@@ -94,14 +80,14 @@
                 <tbody>
                 <c:forEach var="c" items="${clientes}">
                     <tr>
-                        <td>${c.id}</td>
-                        <td><strong><a href="${pageContext.request.contextPath}/controle?acao=cliente.consultar&id=${c.id}" class="link-vinculo">${c.nome}</a></strong></td>
-                        <td>${c.cpf}</td>
-                        <td>${c.telefone}</td>
-                        <td>${c.cidade}</td>
+                        <td>${fn:escapeXml(c.id)}</td>
+                        <td><strong><a href="${pageContext.request.contextPath}/controle?acao=cliente.consultar&id=${fn:escapeXml(c.id)}" class="link-vinculo">${fn:escapeXml(c.nome)}</a></strong></td>
+                        <td>${fn:escapeXml(c.cpf)}</td>
+                        <td>${fn:escapeXml(c.telefone)}</td>
+                        <td>${fn:escapeXml(c.cidade)}</td>
                         <td>
-                            <a href="${pageContext.request.contextPath}/controle?acao=cliente.consultar&id=${c.id}" class="btn btn-sm btn-primary"> Detalhes</a>
-                            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar&clienteId=${c.id}" class="btn btn-sm btn-secondary"> Equipamentos</a>
+                            <a href="${pageContext.request.contextPath}/controle?acao=cliente.consultar&id=${fn:escapeXml(c.id)}" class="btn btn-sm btn-primary"> Detalhes</a>
+                            <a href="${pageContext.request.contextPath}/controle?acao=equipamento.listar&clienteId=${fn:escapeXml(c.id)}" class="btn btn-sm btn-secondary"> Equipamentos</a>
                         </td>
                     </tr>
                 </c:forEach>

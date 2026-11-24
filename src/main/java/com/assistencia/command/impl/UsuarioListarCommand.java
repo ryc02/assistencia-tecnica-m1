@@ -1,23 +1,25 @@
 package com.assistencia.command.impl;
 
-import com.assistencia.command.ICommand;
+import com.assistencia.command.*;
+import com.assistencia.dados.Registros;
+import com.assistencia.model.usuario.Usuario;
 import com.assistencia.service.UsuarioService;
-import com.assistencia.model.Usuario;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.List;
+import java.util.*;
+import javax.servlet.http.*;
 
+/** [Command - Aula 07] Lista os usuários (sem senhas). */
 public class UsuarioListarCommand implements ICommand {
-    private final UsuarioService usuarioService = new UsuarioService();
+    private final UsuarioService servico;
+
+    public UsuarioListarCommand(UsuarioService servico) {
+        this.servico = servico;
+    }
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            List<Usuario> usuarios = usuarioService.listarTodos();
-            request.setAttribute("usuarios", usuarios);
-        } catch (Exception e) {
-            request.setAttribute("erro", "Erro ao listar usuários: " + e.getMessage());
-        }
-        return "/WEB-INF/views/usuario-listar.jsp";
+    public String execute(HttpServletRequest requisicao, HttpServletResponse resposta) throws Exception {
+        Registros<Usuario> usuarios = servico.listarTodos();
+        List<Map<String, Object>> visao = usuarios.exportar();
+        requisicao.setAttribute("usuarios", visao);
+        return Destino.view("usuario-listar");
     }
 }

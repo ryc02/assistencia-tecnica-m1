@@ -1,33 +1,25 @@
 package com.assistencia.command.impl;
 
-import com.assistencia.command.ICommand;
-import com.assistencia.model.OrdemServico;
-import com.assistencia.service.FichaTecnicaService;
-import com.assistencia.service.OrdemServicoService;
+import com.assistencia.command.*;
+import com.assistencia.service.*;
+import javax.servlet.http.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-/**
- * [Requisito 8: Padrão Command & Requisito 11: Exibe Ordem e Ficha Juntas]
- * Comando para consultar detalhes de uma Ordem de Serviço e sua Ficha Técnica associada.
- */
+/** [Command - Aula 07] Exibe a ordem de serviço com a ficha técnica (atendimento completo). */
 public class OrdemServicoConsultarCommand implements ICommand {
+    private final TelasDeAtendimento telas;
 
-    private final OrdemServicoService ordemServicoService = new OrdemServicoService();
-    private final FichaTecnicaService fichaTecnicaService = new FichaTecnicaService();
+    public OrdemServicoConsultarCommand(TelasDeAtendimento telas) {
+        this.telas = telas;
+    }
 
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String idStr = request.getParameter("id");
-        if (idStr == null || idStr.trim().isEmpty()) {
-            return "redirect:/controle?acao=ordemServico.listar";
+    public String execute(HttpServletRequest requisicao, HttpServletResponse resposta) throws Exception {
+        Long id = ParametrosHttp.id(requisicao, "id");
+        if (id == null) {
+            return Destino.redirecionar("ordemServico.listar");
         }
-        Long id = Long.parseLong(idStr);
-        OrdemServico os = ordemServicoService.buscarPorId(id);
-        request.setAttribute("ordemServico", os);
-        // Exibe OrdemServico e FichaTecnica juntas na página de atendimento
-        request.setAttribute("fichaTecnica", fichaTecnicaService.buscarPorOrdemServicoId(id));
-        return "/WEB-INF/views/ordem-detalhes.jsp";
+        Tela tela = telas.detalhesDaOrdem(id);
+        tela.publicar(requisicao::setAttribute);
+        return Destino.view("ordem-detalhes");
     }
 }

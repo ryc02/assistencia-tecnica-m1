@@ -1,75 +1,41 @@
 package com.assistencia.dao.jdbc;
 
+import com.assistencia.dados.*;
 import com.assistencia.dao.UsuarioDAO;
-import com.assistencia.model.Usuario;
-
+import com.assistencia.model.usuario.Usuario;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
+/** [DAO JDBC] Persistência do Usuário. A listagem nunca lê a coluna de senha. */
 public class UsuarioDAOJDBC implements UsuarioDAO {
-    
+    private static final String INSERIR = "INSERT INTO usuario (nome, email, senha, cargo) VALUES (?, ?, ?, ?)";
+
     @Override
-    public Usuario buscarPorEmailSenha(Connection conn, String email, String senha) throws SQLException {
-        String sql = "SELECT * FROM usuario WHERE email = ? AND senha = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, email);
-            stmt.setString(2, senha);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return new Usuario(
-                        rs.getLong("id"),
-                        rs.getString("nome"),
-                        rs.getString("email"),
-                        rs.getString("senha"),
-                        rs.getString("cargo")
-                    );
-                }
-            }
-        }
-        return null;
+    public Usuario buscarPorEmail(Connection conexao, String email) throws Exception {
+        Linhas linhas = ComandoSql.consultar(conexao, "SELECT * FROM usuario WHERE email = ?", email);
+        return linhas.primeira(Usuario::de);
     }
 
     @Override
-    public List<Usuario> listarTodos(Connection conn) throws SQLException {
-        String sql = "SELECT * FROM usuario ORDER BY nome";
-        List<Usuario> usuarios = new ArrayList<>();
-        try (PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                usuarios.add(new Usuario(
-                    rs.getLong("id"),
-                    rs.getString("nome"),
-                    rs.getString("email"),
-                    rs.getString("senha"),
-                    rs.getString("cargo")
-                ));
-            }
-        }
-        return usuarios;
+    public Usuario buscarPorId(Connection conexao, Long id) throws Exception {
+        Linhas linhas = ComandoSql.consultar(conexao, "SELECT * FROM usuario WHERE id = ?", id);
+        return linhas.primeira(Usuario::de);
     }
 
     @Override
-    public void inserir(Connection conn, Usuario usuario) throws SQLException {
-        String sql = "INSERT INTO usuario (nome, email, senha, cargo) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, usuario.getNome());
-            stmt.setString(2, usuario.getEmail());
-            stmt.setString(3, usuario.getSenha());
-            stmt.setString(4, usuario.getCargo());
-            stmt.executeUpdate();
-        }
+    public Registros<Usuario> listarTodos(Connection conexao) throws Exception {
+        String sql = "SELECT id, nome, email, cargo FROM usuario ORDER BY nome";
+        Linhas linhas = ComandoSql.consultar(conexao, sql);
+        return linhas.converter(Usuario::de);
     }
 
     @Override
-    public void excluir(Connection conn, Long id) throws SQLException {
-        String sql = "DELETE FROM usuario WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setLong(1, id);
-            stmt.executeUpdate();
-        }
+    public void inserir(Connection conexao, Usuario usuario) throws Exception {
+        Campos dados = usuario.exportarComSenha();
+        ComandoSql.inserir(conexao, INSERIR, dados, "nome", "email", "senha", "cargo");
+    }
+
+    @Override
+    public void excluir(Connection conexao, Long id) throws Exception {
+        ComandoSql.executar(conexao, "DELETE FROM usuario WHERE id = ?", id);
     }
 }

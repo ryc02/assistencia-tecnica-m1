@@ -17,3 +17,6 @@ tomcat.*/
 
 # Arquivos antigos
 *.doc
+
+# Ferramentas locais de IA
+.agent/
